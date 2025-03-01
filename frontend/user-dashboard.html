@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Blogging Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container dashboard-container">
+        <div class="sidebar">
+            <h2>Dashboard</h2>
+            <div class="sidebar-back-link">
+                <a href="#"><span class="icon">‹</span></a>
+            </div>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li><a href="#" class="btn btn-create"><span class="icon">+</span> Create Blog</a></li>
+                    <li class="active"><a href="#" data-content="discover">Discover</a></li>
+                    <li><a href="#" data-content="interactions">Interactions</a></li>
+                    <li><a href="#" data-content="saved">Saved Posts</a></li>
+                    <li><a href="#" data-content="my-blog">My Blog</a></li>
+                </ul>
+            </nav>
+            <div class="profile-section">
+                <div class="profile-image">
+                    <img src="placeholder-profile.png" alt="Profile">
+                </div>
+                <div class="profile-info">
+                    <span class="username">Username</span>
+                    <span class="email">example@gmail.com</span>
+                </div>
+                <a href="#" class="profile-link">
+                    <span class="icon">›</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="welcome-header">
+                <h3>Welcome back, <span class="username">Username</span></h3>
+                <div class="search-container">
+                    <input type="text" placeholder="Find blogs, or users..." class="search-input">
+                    <span class="search-icon">🔍</span>
+                </div>
+            </div>
+
+            <div class="dashboard-layout">
+                <div class="posts-container">
+                    <h3>Recent Posts</h3>
+                    <div class="posts-grid">
+                        <div class="post-card"></div>
+                        <div class="post-card"></div>
+                        <div class="post-card"></div>
+                        <div class="post-card"></div>
+                    </div>
+                </div>
+                
+                <div class="following-container">
+                    <h3>Following</h3>
+                    <div class="following-list">
+                        <div class="user-follow">
+                            <div class="user-avatar"></div>
+                            <span class="user-name">User</span>
+                        </div>
+                        <div class="user-follow">
+                            <div class="user-avatar"></div>
+                            <span class="user-name">User</span>
+                        </div>
+                        <div class="user-follow">
+                            <div class="user-avatar"></div>
+                            <span class="user-name">User</span>
+                        </div>
+                        <div class="user-follow">
+                            <div class="user-avatar"></div>
+                            <span class="user-name">User</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

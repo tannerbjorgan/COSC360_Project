@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Blogging Platform</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container dashboard-container">
+        <div class="sidebar">
+            <h2>Admin Dashboard</h2>
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="active"><a href="#" data-content="accounts">Accounts</a></li>
+                    <li><a href="#" data-content="analytics">Analytics</a></li>
+                </ul>
+            </nav>
+            <div class="profile-section">
+                <div class="profile-image">
+                    <img src="placeholder-profile.png" alt="Profile">
+                </div>
+                <div class="profile-info">
+                    <span class="username">Username</span>
+                    <span class="email">example@gmail.com</span>
+                </div>
+                <a href="#" class="profile-link">
+                    <span class="icon">›</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="section-header">
+                <h2>Accounts</h2>
+                <div class="search-container">
+                    <input type="text" placeholder="Find users..." class="search-input">
+                    <span class="search-icon">🔍</span>
+                </div>
+            </div>
+
+            <div class="content-section" id="accounts-content">
+                <div class="table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Date of account creation</th>
+                                <th>Delete</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table rows will be populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="content-section hidden" id="analytics-content">
+                <div class="analytics-container">
+                    <h3>Analytics content will appear here</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
