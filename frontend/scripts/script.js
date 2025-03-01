@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Currently redirecting to Dashboard. Change this with login and sign up pages when built
                 if (this.textContent.includes('Log In')) {
-                    window.location.href = 'user-dashboard.html';
+                    window.location.href = 'login.html';
                 } else if (this.textContent.includes('Get Started')) {
                     window.location.href = 'signup.html';
                 }
@@ -130,4 +130,100 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Creating a new blog post would open an editor interface.');
         });
     }
+    //Function to display error messages 
+    function displayError(elementId, message) {
+    const errorElement = document.getElementById(elementId);
+    if (errorElement) {
+    errorElement.textContent = message;
+        }
+    }
+
+// Login form submission
+const loginForm = document.getElementById('loginForm');
+if (loginForm) {
+    loginForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // Get form values
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        displayError('usernameError', '');
+        displayError('passwordError', '');
+
+        // Validation
+        let hasErrors = false;
+        if (!username) {
+            displayError('usernameError', 'Please enter your username.');
+            hasErrors = true;
+        }
+        if (!password) {
+            displayError('passwordError', 'Please enter your password.');
+            hasErrors = true;
+        }
+
+        if (hasErrors) {
+            return;
+        }
+
+    // Test login- with remove after backend implementation 
+    if (username === 'testuser' && password === 'password') {
+        alert('Login Successful!');
+        window.location.href = 'user-dashboard.html';
+    } else {
+        displayError('passwordError', 'Invalid username or password.');
+    }
+    });
+    }
+        // Signup form submission
+        const signupForm = document.getElementById('signupForm');
+        if (signupForm) {
+        signupForm.addEventListener('submit', function(e) {
+            e.preventDefault(); 
+        // Get form values
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+
+        displayError('nameError', '');
+        displayError('emailError', '');
+        displayError('usernameError', '');
+        displayError('passwordError', '');
+        let hasErrors = false;
+        if (!name) {
+            displayError('nameError', 'Please enter your name.');
+            hasErrors = true;
+        }
+        if (!email) {
+            displayError('emailError', 'Please enter your email.');
+            hasErrors = true;
+        }
+        if (!username) {
+            displayError('usernameError', 'Please enter a username.');
+            hasErrors = true;
+        }
+        if (!password) {
+            displayError('passwordError', 'Please enter a password.');
+            hasErrors = true;
+        }
+
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (email && !emailRegex.test(email)) {
+            displayError('emailError', 'Please enter a valid email address.');
+            hasErrors = true;
+        }
+
+        if (hasErrors) {
+            return;
+        }
+
+        // Simulate signup (will change later)
+        alert('Signup Successful!\n\nName: ' + name + '\nEmail: ' + email + '\nUsername: ' + username + '\nPassword: ' + password);
+
+        window.location.href = 'login.html';
+    });
+}            
+
 });
