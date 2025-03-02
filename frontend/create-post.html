@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Create Blogs</title>
+  <link rel="stylesheet" href="styles/create-post.css" />
+</head>
+<body>
+  <div class="create-post-container">
+    <div class="top-bar">
+      <button id="backBtn" class="back-btn">←</button>
+    </div>
+
+    <input
+      type="text"
+      id="postTitle"
+      class="post-title-input"
+      placeholder="Title"
+    />
+    <div id="titleError" class="error-message"></div>
+
+    <input
+      type="text"
+      id="postSubtitle"
+      class="post-subtitle-input"
+      placeholder="Subtitle"
+    />
+
+    <div class="story-box">
+      <textarea
+        id="postContent"
+        class="post-content-textarea"
+        placeholder="Tell your story..."
+      ></textarea>
+    </div>
+
+    <div id="contentError" class="error-message"></div>
+
+    <div class="upload-section">
+      <span id="uploadLink" class="upload-link">Upload file</span>
+    </div>
+
+    <div class="action-buttons">
+      <button id="cancelBtn" class="btn-cancel">Cancel</button>
+      <button id="saveBtn" class="btn-save">Save</button>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('backBtn').addEventListener('click', function() {
+      window.location.href = 'user-dashboard.html';
+    });
+
+    document.getElementById('uploadLink').addEventListener('click', function() {
+      console.log("Upload functionality not implemented yet.");
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', function() {
+      window.location.href = 'user-dashboard.html';
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', function() {
+    const titleInput = document.getElementById('postTitle');
+    const contentInput = document.getElementById('postContent');
+    const titleError = document.getElementById('titleError');
+    const contentError = document.getElementById('contentError');
+
+    titleError.textContent = "";
+    contentError.textContent = "";
+
+    let hasErrors = false;
+  
+    if (!titleInput.value.trim()) {
+        titleError.textContent = "Title is required.";
+        hasErrors = true;
+    }
+
+    if (!contentInput.value.trim()) {
+        contentError.textContent = "Story content is required.";
+        hasErrors = true;
+    }
+
+    if (hasErrors) {
+        return;
+    }
+
+    window.location.href = 'user-dashboard.html';
+    });
+  </script>
+</body>
+</html>
