@@ -16,3 +16,8 @@ A blogging web application where users can sign up for accounts, create and mana
 *   Tanner Bjorgan (42601336)
 *   Medha Ramdewar (91117598)
 *   Dichen Feng (63754865)
+
+## Dummy user used for test
+      id: 'testuser',
+      email: 'user@example.com',
+      password: 'password'
