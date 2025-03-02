@@ -1,4 +1,77 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching functionality
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons and panes
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabPanes.forEach(pane => pane.classList.remove('active'));
+
+            // Add active class to clicked button and corresponding pane
+            button.classList.add('active');
+            const tabId = button.getAttribute('data-tab');
+            document.getElementById(`${tabId}-tab`).classList.add('active');
+        });
+    });
+
+    // View switching functionality
+    const viewButtons = document.querySelectorAll('.view-btn');
+    const postsGrid = document.querySelector('.posts-grid');
+
+    viewButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            viewButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            const viewType = button.getAttribute('data-view');
+            postsGrid.className = `posts-grid view-${viewType}`;
+        });
+    });
+
+    // Category and type item click handling
+    const subcategoryItems = document.querySelectorAll('.subcategory-item');
+    subcategoryItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // Remove active class from all category items
+            subcategoryItems.forEach(cat => cat.classList.remove('active'));
+            // Add active class to clicked item
+            this.classList.add('active');
+        });
+    });
+
+    const typeItems = document.querySelectorAll('.type-item');
+    typeItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // Remove active class from all type items
+            typeItems.forEach(type => type.classList.remove('active'));
+            // Add active class to clicked item
+            this.classList.add('active');
+        });
+    });
+
+    // Trending post click handling
+    const trendingPosts = document.querySelectorAll('.trending-post');
+    trendingPosts.forEach(post => {
+        post.addEventListener('click', function() {
+            // Handle trending post click (e.g., navigate to post)
+            console.log('Trending post clicked:', this.querySelector('h4').textContent);
+        });
+    });
+
+    // Search functionality
+    const searchInput = document.querySelector('.search-input');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                // Handle search
+                console.log('Search for:', this.value);
+                this.value = '';
+            }
+        });
+    }
+
     // Navigation between sidebar tabs in dashboards
     const sidebarLinks = document.querySelectorAll('.sidebar-nav a[data-content]');
     if (sidebarLinks.length > 0) {
@@ -224,5 +297,4 @@ if (loginForm) {
         window.location.href = 'login.html';
     });
 }            
-
 });
