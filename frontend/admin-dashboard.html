@@ -4,68 +4,142 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Blogging Platform</title>
-    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/styles/common.css">
+    <link rel="stylesheet" href="/frontend/styles/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
-    <div class="container dashboard-container">
+    <div class="dashboard-container">
+        <!-- Sidebar -->
         <div class="sidebar">
-            <h2>Admin Dashboard</h2>
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="active"><a href="#" data-content="accounts">Accounts</a></li>
-                    <li><a href="#" data-content="analytics">Analytics</a></li>
-                </ul>
-            </nav>
-            <div class="profile-section">
-                <div class="profile-image">
-                    <img src="placeholder-profile.png" alt="Profile">
-                </div>
-                <div class="profile-info">
-                    <span class="username">Username</span>
-                    <span class="email">example@gmail.com</span>
-                </div>
-                <a href="#" class="profile-link">
-                    <span class="icon">›</span>
+            <div class="sidebar-header">
+                <a href="index.html" class="logo">
+                    <i class="fas fa-pen-fancy"></i>
+                    <span>Admin</span>
                 </a>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <h4>MANAGEMENT</h4>
+                    <ul>
+                        <li class="active">
+                            <a href="#" data-content="accounts">
+                                <i class="fas fa-users"></i>
+                                <span>User Accounts</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-content="analytics">
+                                <i class="fas fa-chart-bar"></i>
+                                <span>Analytics</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-content="reports">
+                                <i class="fas fa-flag"></i>
+                                <span>Reports</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="profile-section">
+                    <div class="profile-image">
+                        <img src="placeholder-profile.png" alt="Admin Profile">
+                    </div>
+                    <div class="profile-info">
+                        <span class="username">Admin User</span>
+                        <span class="role">Administrator</span>
+                    </div>
+                </div>
             </div>
         </div>
 
+        <!-- Main Content -->
         <div class="main-content">
-            <div class="section-header">
-                <h2>Accounts</h2>
+            <!-- Top Bar -->
+            <div class="top-bar">
                 <div class="search-container">
-                    <input type="text" placeholder="Find users..." class="search-input">
-                    <span class="search-icon">🔍</span>
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" placeholder="Search users..." class="search-input">
+                </div>
+                <div class="top-bar-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                    </button>
                 </div>
             </div>
 
-            <div class="content-section" id="accounts-content">
-                <div class="table-container">
-                    <table class="users-table">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Email</th>
-                                <th>Date of account creation</th>
-                                <th>Delete</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Table rows will be populated dynamically -->
-                        </tbody>
-                    </table>
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Stats Overview -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Users</h3>
+                            <p>1,234</p>
+                            <span class="trend positive">+12% <i class="fas fa-arrow-up"></i></span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>Total Posts</h3>
+                            <p>5,678</p>
+                            <span class="trend positive">+8% <i class="fas fa-arrow-up"></i></span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3>New Users</h3>
+                            <p>145</p>
+                            <span class="trend positive">+23% <i class="fas fa-arrow-up"></i></span>
+                        </div>
+                    </div>
                 </div>
-            </div>
 
-            <div class="content-section hidden" id="analytics-content">
-                <div class="analytics-container">
-                    <h3>Analytics content will appear here</h3>
+                <!-- Users Table -->
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>User Management</h2>
+                        <button class="btn btn-outline">
+                            <i class="fas fa-download"></i>
+                            Export Data
+                        </button>
+                    </div>
+                    <div class="table-container">
+                        <table class="users-table">
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Join Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Table rows will be populated dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="/frontend/scripts/script.js"></script>
 </body>
 </html>
