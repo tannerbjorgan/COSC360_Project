@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     
-    // Add placeholder profile images
+    // Added placeholder profile images
     const profileImgs = document.querySelectorAll('.profile-image img, .auth-icon img');
     profileImgs.forEach(img => {
         if (!img.src || img.src.includes('placeholder')) {
@@ -67,9 +67,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (this.href.includes('login.html') || this.href.includes('signup.html')) {
                 e.preventDefault();
-                alert('Login/Signup functionality would be implemented in the backend.');
                 
-                // Currently redirecting to Dashboard. Change this with login and sign up pages when built
+                
                 if (this.textContent.includes('Log In')) {
                     window.location.href = 'login.html';
                 } else if (this.textContent.includes('Get Started')) {
