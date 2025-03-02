@@ -1,24 +1,89 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Tab switching functionality
+    const tabButtons = document.querySelectorAll('.tab-btn');
+    const tabPanes = document.querySelectorAll('.tab-pane');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons and panes
+            tabButtons.forEach(btn => btn.classList.remove('active'));
+            tabPanes.forEach(pane => pane.classList.remove('active'));
+
+            // Add active class to clicked button and corresponding pane
+            button.classList.add('active');
+            const tabId = button.getAttribute('data-tab');
+            document.getElementById(`${tabId}-tab`).classList.add('active');
+        });
+    });
+
+    // View switching functionality
+    const viewButtons = document.querySelectorAll('.view-btn');
+    const postsGrid = document.querySelector('.posts-grid');
+
+    viewButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            viewButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            const viewType = button.getAttribute('data-view');
+            postsGrid.className = `posts-grid view-${viewType}`;
+        });
+    });
+
+    // Category and type item click handling
+    const subcategoryItems = document.querySelectorAll('.subcategory-item');
+    subcategoryItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // Remove active class from all category items
+            subcategoryItems.forEach(cat => cat.classList.remove('active'));
+            // Add active class to clicked item
+            this.classList.add('active');
+        });
+    });
+
+    const typeItems = document.querySelectorAll('.type-item');
+    typeItems.forEach(item => {
+        item.addEventListener('click', function() {
+            // Remove active class from all type items
+            typeItems.forEach(type => type.classList.remove('active'));
+            // Add active class to clicked item
+            this.classList.add('active');
+        });
+    });
+
+    // Trending post click handling
+    const trendingPosts = document.querySelectorAll('.trending-post');
+    trendingPosts.forEach(post => {
+        post.addEventListener('click', function() {
+            // Handle trending post click (e.g., navigate to post)
+            console.log('Trending post clicked:', this.querySelector('h4').textContent);
+        });
+    });
+
+    // Search functionality
+    const searchInput = document.querySelector('.search-input');
+    if (searchInput) {
+        searchInput.addEventListener('keyup', function(e) {
+            if (e.key === 'Enter') {
+                // Handle search
+                console.log('Search for:', this.value);
+                this.value = '';
+            }
+        });
+    }
+
     // Navigation between sidebar tabs in dashboards
     const sidebarLinks = document.querySelectorAll('.sidebar-nav a[data-content]');
     if (sidebarLinks.length > 0) {
+        // Store the initial dashboard content
+        const dashboardContent = document.querySelector('.dashboard-content').innerHTML;
+
         sidebarLinks.forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 
                 // Get the content section to show
                 const contentId = this.getAttribute('data-content');
-                const contentSection = document.getElementById(`${contentId}-content`);
-                
-                // Hide all content sections
-                document.querySelectorAll('.content-section').forEach(section => {
-                    section.classList.add('hidden');
-                });
-                
-                // Show the selected content section
-                if (contentSection) {
-                    contentSection.classList.remove('hidden');
-                }
                 
                 // Update active state in sidebar
                 document.querySelectorAll('.sidebar-nav li').forEach(item => {
@@ -26,16 +91,67 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 this.parentElement.classList.add('active');
                 
-                // Update section header if applicable
-                const sectionHeader = document.querySelector('.section-header h2');
-                if (sectionHeader) {
-                    sectionHeader.textContent = contentId.charAt(0).toUpperCase() + contentId.slice(1);
+                // Handle dashboard content
+                const mainContent = document.querySelector('.main-content');
+                if (contentId === 'dashboard') {
+                    // Restore the dashboard content
+                    mainContent.innerHTML = `
+                        <div class="top-bar">
+                            <div class="search-container">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" placeholder="Search posts, topics, or users..." class="search-input">
+                            </div>
+                            <div class="top-bar-actions">
+                                <button class="notification-btn">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="notification-badge">5</span>
+                                </button>
+                                <div class="user-menu">
+                                    <button class="user-menu-btn">
+                                        <img src="placeholder-profile.png" alt="Profile">
+                                        <span>John Doe</span>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-content">
+                            ${dashboardContent}
+                        </div>
+                    `;
+                } else {
+                    // Show placeholder content for other sections
+                    mainContent.innerHTML = `
+                        <div class="top-bar">
+                            <div class="search-container">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" placeholder="Search posts, topics, or users..." class="search-input">
+                            </div>
+                            <div class="top-bar-actions">
+                                <button class="notification-btn">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="notification-badge">5</span>
+                                </button>
+                                <div class="user-menu">
+                                    <button class="user-menu-btn">
+                                        <img src="placeholder-profile.png" alt="Profile">
+                                        <span>John Doe</span>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content-section">
+                            <h2>${contentId.charAt(0).toUpperCase() + contentId.slice(1)}</h2>
+                            <p>Content for ${contentId} will be displayed here.</p>
+                        </div>
+                    `;
                 }
             });
         });
     }
     
-    // Add placeholder profile images
+    // Added placeholder profile images
     const profileImgs = document.querySelectorAll('.profile-image img, .auth-icon img');
     profileImgs.forEach(img => {
         if (!img.src || img.src.includes('placeholder')) {
@@ -67,9 +183,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (this.href.includes('login.html') || this.href.includes('signup.html')) {
                 e.preventDefault();
-                alert('Login/Signup functionality would be implemented in the backend.');
                 
-                // Currently redirecting to Dashboard. Change this with login and sign up pages when built
+                
                 if (this.textContent.includes('Log In')) {
                     window.location.href = 'login.html';
                 } else if (this.textContent.includes('Get Started')) {
@@ -225,5 +340,4 @@ if (loginForm) {
         window.location.href = 'login.html';
     });
 }            
-
 });

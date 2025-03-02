@@ -1,0 +1,366 @@
+/* Discover Page Specific Styles */
+
+/* Main Layout */
+.discover-main {
+    padding-top: 5rem;
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--background-alt);
+}
+
+/* Sidebar Styles */
+.discover-sidebar {
+    width: 300px;
+    background: white;
+    padding: 1.5rem;
+    border-right: 1px solid #e5e7eb;
+    position: fixed;
+    height: calc(100vh - 5rem);
+    overflow-y: auto;
+    top: 5rem;
+}
+
+.search-container {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.75rem 2.5rem 0.75rem 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    transition: border-color 0.2s;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+.search-icon {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-light);
+    pointer-events: none;
+}
+
+/* Sidebar Tabs */
+.sidebar-tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: var(--background-alt);
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab-btn.active {
+    background: var(--primary-color);
+    color: white;
+}
+
+.tab-btn i {
+    font-size: 1rem;
+}
+
+/* Tab Content */
+.tab-content {
+    margin-bottom: 2rem;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+/* Trending Posts */
+.trending-posts {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.trending-post {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--background-alt);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.trending-post:hover {
+    transform: translateX(4px);
+}
+
+.trending-number {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.trending-info h4 {
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+
+.trending-info span {
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+/* Filters */
+.filter-section {
+    margin-bottom: 1.5rem;
+}
+
+.filter-section h3 {
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    cursor: pointer;
+}
+
+.filter-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+}
+
+/* Sidebar Footer */
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 2rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.sidebar-login {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: var(--background-alt);
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.sidebar-login:hover {
+    background-color: #f3f4f6;
+}
+
+.login-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.login-content i {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+.login-content span {
+    font-size: 0.875rem;
+}
+
+/* Main Content */
+.discover-content {
+    flex: 1;
+    margin-left: 300px;
+    padding: 2rem 3rem;
+}
+
+.discover-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.discover-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.view-options {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.view-btn {
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.view-btn.active {
+    color: var(--primary-color);
+}
+
+/* Posts Grid */
+.posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.post-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s;
+}
+
+.post-card:hover {
+    transform: translateY(-4px);
+}
+
+.post-card.featured {
+    grid-column: span 2;
+}
+
+.post-image {
+    position: relative;
+    height: 200px;
+}
+
+.post-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.category-tag {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.post-content {
+    padding: 1.5rem;
+}
+
+.post-content h3 {
+    font-size: 1.125rem;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+}
+
+.post-content p {
+    color: var(--text-light);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+}
+
+.post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.author {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.author img {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+}
+
+.read-time {
+    font-size: 0.75rem;
+    color: var(--text-light);
+}
+
+/* Load More */
+.load-more {
+    text-align: center;
+    margin-top: 3rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .discover-sidebar {
+        width: 260px;
+    }
+
+    .discover-content {
+        margin-left: 260px;
+        padding: 2rem;
+    }
+
+    .post-card.featured {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .discover-main {
+        flex-direction: column;
+        padding-top: 4rem;
+    }
+
+    .discover-sidebar {
+        width: 100%;
+        height: auto;
+        position: static;
+        padding: 1.5rem;
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .discover-content {
+        margin-left: 0;
+        padding: 1.5rem;
+    }
+
+    .posts-grid {
+        grid-template-columns: 1fr;
+    }
+} 
