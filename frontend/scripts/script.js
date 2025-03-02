@@ -75,23 +75,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // Navigation between sidebar tabs in dashboards
     const sidebarLinks = document.querySelectorAll('.sidebar-nav a[data-content]');
     if (sidebarLinks.length > 0) {
+        // Store the initial dashboard content
+        const dashboardContent = document.querySelector('.dashboard-content').innerHTML;
+
         sidebarLinks.forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 
                 // Get the content section to show
                 const contentId = this.getAttribute('data-content');
-                const contentSection = document.getElementById(`${contentId}-content`);
-                
-                // Hide all content sections
-                document.querySelectorAll('.content-section').forEach(section => {
-                    section.classList.add('hidden');
-                });
-                
-                // Show the selected content section
-                if (contentSection) {
-                    contentSection.classList.remove('hidden');
-                }
                 
                 // Update active state in sidebar
                 document.querySelectorAll('.sidebar-nav li').forEach(item => {
@@ -99,10 +91,61 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
                 this.parentElement.classList.add('active');
                 
-                // Update section header if applicable
-                const sectionHeader = document.querySelector('.section-header h2');
-                if (sectionHeader) {
-                    sectionHeader.textContent = contentId.charAt(0).toUpperCase() + contentId.slice(1);
+                // Handle dashboard content
+                const mainContent = document.querySelector('.main-content');
+                if (contentId === 'dashboard') {
+                    // Restore the dashboard content
+                    mainContent.innerHTML = `
+                        <div class="top-bar">
+                            <div class="search-container">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" placeholder="Search posts, topics, or users..." class="search-input">
+                            </div>
+                            <div class="top-bar-actions">
+                                <button class="notification-btn">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="notification-badge">5</span>
+                                </button>
+                                <div class="user-menu">
+                                    <button class="user-menu-btn">
+                                        <img src="placeholder-profile.png" alt="Profile">
+                                        <span>John Doe</span>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="dashboard-content">
+                            ${dashboardContent}
+                        </div>
+                    `;
+                } else {
+                    // Show placeholder content for other sections
+                    mainContent.innerHTML = `
+                        <div class="top-bar">
+                            <div class="search-container">
+                                <i class="fas fa-search search-icon"></i>
+                                <input type="text" placeholder="Search posts, topics, or users..." class="search-input">
+                            </div>
+                            <div class="top-bar-actions">
+                                <button class="notification-btn">
+                                    <i class="fas fa-bell"></i>
+                                    <span class="notification-badge">5</span>
+                                </button>
+                                <div class="user-menu">
+                                    <button class="user-menu-btn">
+                                        <img src="placeholder-profile.png" alt="Profile">
+                                        <span>John Doe</span>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content-section">
+                            <h2>${contentId.charAt(0).toUpperCase() + contentId.slice(1)}</h2>
+                            <p>Content for ${contentId} will be displayed here.</p>
+                        </div>
+                    `;
                 }
             });
         });
