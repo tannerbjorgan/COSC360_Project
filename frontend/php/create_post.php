@@ -28,8 +28,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $servername = "localhost";
-        $username = "root";     
-        $password = "";         
+        $username = "dfeng06";     
+        $password = "dfeng06";         
         $dbname = "dfeng06"; 
 
         $conn = new mysqli($servername, $username, $password, $dbname);

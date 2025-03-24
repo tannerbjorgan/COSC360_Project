@@ -10,8 +10,8 @@ $post_id = intval($_POST['post_id']);
 $user_id = 1; 
 
 $servername = "localhost";
-$username = "root";
-$password = "";
+$username = "dfeng06";
+$password = "dfeng06";
 $dbname = "dfeng06";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
