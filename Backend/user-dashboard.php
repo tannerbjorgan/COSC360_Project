@@ -10,8 +10,8 @@ if (!isset($_SESSION['user_id'])) {
 <head>
     <meta charset="UTF-8">
     <title>User Dashboard - Blogging Platform</title>
-    <link rel="stylesheet" href="/frontend/styles/common.css">
-    <link rel="stylesheet" href="/frontend/styles/dashboard.css">
+    <link rel="stylesheet" href="styles/common.css">
+    <link rel="stylesheet" href="styles/dashboard.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -60,7 +60,6 @@ if (!isset($_SESSION['user_id'])) {
                         </li>
                     </ul>
                 </div>
-
                 <div class="nav-section">
                     <h4>DISCOVER</h4>
                     <ul>
@@ -134,8 +133,7 @@ if (!isset($_SESSION['user_id'])) {
                             </div>
                             <div class="stat-info">
                                 <h3>Total Views</h3>
-                                <p>12.5K</p>
-                                <span class="trend positive">+8.2% <i class="fas fa-arrow-up"></i></span>
+                                <p id="totalViews">0</p>
                             </div>
                         </div>
                         <div class="stat-card">
@@ -144,8 +142,7 @@ if (!isset($_SESSION['user_id'])) {
                             </div>
                             <div class="stat-info">
                                 <h3>Total Likes</h3>
-                                <p>1.2K</p>
-                                <span class="trend positive">+12.4% <i class="fas fa-arrow-up"></i></span>
+                                <p id="totalLikes">0</p>
                             </div>
                         </div>
                         <div class="stat-card">
@@ -154,8 +151,7 @@ if (!isset($_SESSION['user_id'])) {
                             </div>
                             <div class="stat-info">
                                 <h3>Comments</h3>
-                                <p>284</p>
-                                <span class="trend positive">+3.7% <i class="fas fa-arrow-up"></i></span>
+                                <p id="totalComments">0</p>
                             </div>
                         </div>
                         <div class="stat-card">
@@ -164,54 +160,18 @@ if (!isset($_SESSION['user_id'])) {
                             </div>
                             <div class="stat-info">
                                 <h3>Followers</h3>
-                                <p>892</p>
-                                <span class="trend positive">+5.3% <i class="fas fa-arrow-up"></i></span>
+                                <p id="totalFollowers">0</p>
                             </div>
-                        </div>
+                        </div>                        
                     </div>
                 </div>
                 <div class="content-section">
                     <div class="section-header">
                         <h2>Recent Posts</h2>
-                        <a href="#" class="btn btn-link">View All <i class="fas fa-arrow-right"></i></a>
+                        <a href="#" id="recentViewAll" class="btn btn-link">View All <i class="fas fa-arrow-right"></i></a>
                     </div>
-                    <div class="posts-grid">
-                        <div class="post-card">
-                            <div class="post-image">
-                                <img src="https://via.placeholder.com/300x200" alt="Post thumbnail">
-                                <span class="category-tag">Technology</span>
-                            </div>
-                            <div class="post-content">
-                                <h3>Getting Started with Web Development in 2024</h3>
-                                <p>A comprehensive guide for beginners looking to start their journey in web development...</p>
-                                <div class="post-meta">
-                                    <div class="post-stats">
-                                        <span><i class="fas fa-eye"></i> 1.2K</span>
-                                        <span><i class="fas fa-heart"></i> 45</span>
-                                        <span><i class="fas fa-comment"></i> 12</span>
-                                    </div>
-                                    <span class="post-date">2 days ago</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="post-card">
-                            <div class="post-image">
-                                <img src="https://via.placeholder.com/300x200" alt="Post thumbnail">
-                                <span class="category-tag">Design</span>
-                            </div>
-                            <div class="post-content">
-                                <h3>UI Design Trends to Watch in 2024</h3>
-                                <p>Exploring the latest trends in user interface design and what's coming next...</p>
-                                <div class="post-meta">
-                                    <div class="post-stats">
-                                        <span><i class="fas fa-eye"></i> 856</span>
-                                        <span><i class="fas fa-heart"></i> 32</span>
-                                        <span><i class="fas fa-comment"></i> 8</span>
-                                    </div>
-                                    <span class="post-date">4 days ago</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="posts-grid" id="recentPosts">
+                        <!-- Recent posts will be injected here via JavaScript -->
                     </div>
                 </div>
 
@@ -289,7 +249,7 @@ if (!isset($_SESSION['user_id'])) {
             </div>
         </div>
     </div>
+    <script src="scripts/dashboard.js"></script>
 
-    <script src="/frontend/scripts/script.js"></script>
 </body>
 </html>

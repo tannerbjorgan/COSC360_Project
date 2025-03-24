@@ -5,56 +5,50 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Blog Detail</title>
   <link rel="stylesheet" href="styles/post.css" />
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
   <div class="post-container">
-
     <div class="top-bar">
       <button class="back-btn" id="backBtn">←</button>
-      <h1 class="page-label">Blog detail</h1>
+      <h1 class="page-label">Blog Detail</h1>
     </div>
 
-    <h2 class="post-title">Title</h2>
-    <h3 class="post-subtitle">Subtitle</h3>
+    <h2 class="post-title" id="postTitle">Title</h2>
+    <h3 class="post-subtitle" id="postSubtitle">Subtitle</h3>
 
     <div class="meta-row">
       <div class="user-info">
-        <span class="poster-id">userID</span>
+        <span class="poster-id" id="posterId">userID</span>
         <button class="follow-btn">Follow</button>
-        <span class="post-date">2/7/2025</span>
+        <span class="post-date" id="postDate">2/7/2025</span>
       </div>
 
       <div class="post-stats">
         <span class="likes">
-          <span class="icon-heart">❤️</span> 123
+          <i class="fas fa-heart"></i> <span id="likeCount">0</span>
         </span>
         <span class="comments-count clickable" id="commentsIcon">
-          <span class="icon-chat">💬</span> 12
+          <i class="fas fa-comment"></i> <span id="commentCount">0</span>
         </span>
         <span class="save">
-          <span class="icon-save">🔖</span> Save
+          <i class="fas fa-bookmark"></i> Save
         </span>
         <span class="share">
-          <span class="icon-share">↗️</span> Share
+          <i class="fas fa-share"></i> Share
         </span>
       </div>
     </div>
 
     <hr class="divider" />
 
-    <div class="image-placeholder"></div>
+    <div class="image-placeholder" id="postImageContainer">
+      <!-- Image will be injected here -->
+    </div>
 
-    <div class="post-content">
-      <p>
-        Kelowna dog owners are being advised to rinse their pet’s feet after a walk this winter on city walkways.<br/>
-        Local resident Tracy Lessard says she recently learned that the city does not use pet-safe ice melt on pathways like the ones around the Parkinson Rec Centre where she walks her dog.<br/>
-        “I just want to protect the dogs out there and just make sure owners know,” Lessard said.<br/>
-        She is hoping the city can change to a pet-safe ice melt or place signs on walkways where salt is deployed.<br/>
-        “Then you can choose to walk your dog where you wash their feet the minute they get in, if you still choose to, or not,” she added.<br/>
-        The City of Kelowna, in a statement to Castanet, says they use a mixture of rock salt and sand or a commercial ice melt product on civic pathways.<br/>
-        “There are alternatives available that are labeled pet-safe but they are less effective at melting ice and managing the freeze thaw cycle and their name is misleading as they are not truly pet-safe,” said Geert Bos, infrastructure operations department manager.<br/>
-        “As our priority is providing a safe surface, we select the materials that will do the best job while minimizing environmental impact.”
-      </p>
+    <div class="post-content" id="postContent">
+      <!-- Post content will be injected here -->
     </div>
 
     <hr class="divider" />
@@ -65,7 +59,7 @@
         <textarea placeholder="Leave a comment..."></textarea>
         <button class="comment-btn">Post Comment</button>
       </div>
-
+      <!-- Static sample comments -->
       <div class="comment">
         <span class="comment-user">user123</span>
         <span class="comment-time">1 hour ago</span>
@@ -79,14 +73,6 @@
     </div>
   </div>
 
-  <script>
-    document.getElementById('backBtn').addEventListener('click', function() {
-      window.history.back();
-    });
-
-    document.getElementById('commentsIcon').addEventListener('click', function() {
-      document.getElementById('commentsSection').scrollIntoView({ behavior: 'smooth' });
-    });
-  </script>
+  <script src = "scripts/post.js"></script>
 </body>
 </html>

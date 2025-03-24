@@ -1,10 +1,9 @@
 <?php
-$servername = "cosc360.ok.ubc.ca";
-$username = "dfeng06";      // XAMPP default username
-$password = "dfeng06";          // XAMPP default password is empty
-$dbname = "dfeng06"; // Make sure this database exists in phpMyAdmin
+$servername = "localhost";
+$username = "root";     
+$password = "";         
+$dbname = "dfeng06"; 
 
-// Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 
 // Check connection
