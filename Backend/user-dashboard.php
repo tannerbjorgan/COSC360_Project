@@ -1,8 +1,14 @@
+<?php
+session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.html");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard - Blogging Platform</title>
     <link rel="stylesheet" href="/frontend/styles/common.css">
     <link rel="stylesheet" href="/frontend/styles/dashboard.css">
@@ -25,9 +31,7 @@
             </button>
 
             <nav class="sidebar-nav">
-
                 <div class="nav-section">
-                    
                     <ul>
                         <li class="active">
                             <a href="#" data-content="dashboard">
@@ -55,7 +59,6 @@
                             </a>
                         </li>
                     </ul>
-
                 </div>
 
                 <div class="nav-section">
@@ -96,9 +99,8 @@
             </div>
         </div>
 
-        <!-- Main Content -->
         <div class="main-content">
-            <!-- Top Bar -->
+
             <div class="top-bar">
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
@@ -109,6 +111,9 @@
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge">5</span>
                     </button>
+                    
+                    <a href="logout.php" class="btn btn-secondary">Logout</a>
+
                     <div class="user-menu">
                         <button class="user-menu-btn">
                             <img src="placeholder-profile.png" alt="Profile">
@@ -118,10 +123,9 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Dashboard Content -->
             <div class="dashboard-content">
-                <!-- Overview Section -->
+
+
                 <div class="overview-section">
                     <div class="stats-grid">
                         <div class="stat-card">
@@ -166,8 +170,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- Recent Posts Section -->
                 <div class="content-section">
                     <div class="section-header">
                         <h2>Recent Posts</h2>
@@ -213,7 +215,6 @@
                     </div>
                 </div>
 
-                <!-- Activity & Engagement Section -->
                 <div class="content-grid">
                     <div class="content-section">
                         <div class="section-header">
@@ -284,6 +285,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
