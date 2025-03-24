@@ -1,3 +1,18 @@
+<?php
+session_start();
+
+// Ensure user is logged in
+if (!isset($_SESSION['user_id'])) {
+    header("Location: login.html");
+    exit;
+}
+
+// Ensure user is admin
+if ($_SESSION['is_admin'] != 1) {
+    header("Location: user-dashboard.php");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -72,6 +87,10 @@
                         <i class="fas fa-bell"></i>
                         <span class="notification-badge">3</span>
                     </button>
+
+                    <!-- Logout link -->
+                    <a href="logout.php" class="btn btn-secondary">Logout</a>
+
                     <div class="user-menu">
                         <button class="user-menu-btn">
                             <img src="placeholder-profile.png" alt="Profile">
@@ -139,7 +158,6 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Table rows will be populated dynamically -->
                             </tbody>
                         </table>
                     </div>
