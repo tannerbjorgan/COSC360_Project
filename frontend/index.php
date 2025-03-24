@@ -34,8 +34,8 @@ $isLoggedIn = isset($_SESSION['user_id']);
                     <a href="../Backend/user-dashboard.php" class="btn btn-link">Dashboard</a>
                     <a href="../frontend/user-profile.php" class="btn btn-primary">Profile</a>
                 <?php else: ?>
-                    <a href="../Backend/login.html" class="btn btn-link">Log In</a>
-                    <a href="../Backend/signup.html" class="btn btn-primary">Get Started</a>
+                    <a href="../Backend/login.php" class="btn btn-link">Log In</a>
+                    <a href="../Backend/signup.php" class="btn btn-primary">Get Started</a>
                 <?php endif; ?>
             </div>
         </header>
@@ -46,7 +46,11 @@ $isLoggedIn = isset($_SESSION['user_id']);
                     <h1>Share Your Story With<br><span class="highlight">The World</span></h1>
                     <p class="hero-subtitle">Create, share, and discover amazing stories from writers around the globe.</p>
                     <div class="hero-cta">
-                        <a href="../Backend/signup.html" class="btn btn-action">Start Writing <i class="fas fa-arrow-right"></i></a>
+                        <?php if ($isLoggedIn): ?>
+                            <a href="../Backend/user-dashboard.php" class="btn btn-action">Start Writing <i class="fas fa-arrow-right"></i></a>
+                        <?php else: ?>
+                            <a href="../Backend/signup.php" class="btn btn-action">Start Writing <i class="fas fa-arrow-right"></i></a>
+                        <?php endif; ?>
                         <a href="discover.php" class="btn btn-secondary">Explore Posts</a>
                     </div>
                 </div>
@@ -98,7 +102,11 @@ $isLoggedIn = isset($_SESSION['user_id']);
                 <div class="cta-content">
                     <h2>Ready to Start Your Journey?</h2>
                     <p>Join thousands of writers who have already found their voice</p>
-                    <a href="../Backend/signup.html" class="btn btn-action">Create Your Account</a>
+                    <?php if ($isLoggedIn): ?>
+                        <a href="../Backend/user-dashboard.php" class="btn btn-action">Go to Dashboard</a>
+                    <?php else: ?>
+                        <a href="../Backend/signup.php" class="btn btn-action">Create Your Account</a>
+                    <?php endif; ?>
                 </div>
             </section>
         </main>

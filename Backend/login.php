@@ -1,38 +1,42 @@
 <?php
 session_start();
-include 'config.php'; 
+require_once 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $emailOrUsername = trim($_POST['username'] ?? '');
-    $pass            = trim($_POST['password'] ?? '');
+    $username = $_POST['username'];
+    $password = $_POST['password'];
 
     try {
-        // Find user by email or username
-        $sql  = "SELECT * FROM users WHERE email = :login OR username = :login LIMIT 1";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([':login' => $emailOrUsername]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        // Check if input is email or username
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
+        $stmt->execute([$username, $username]);
+        $user = $stmt->fetch();
 
-        // Verify password if user found
-        if ($user && password_verify($pass, $user['password'])) {
-            // Store session data
-            $_SESSION['user_id']  = $user['id'];
-            $_SESSION['is_admin'] = $user['is_admin'];
-
-            // Redirect based on admin or user
-            if ($user['is_admin'] == 1) {
-                header('Location: admin-dashboard.php');
+        if ($user && password_verify($password, $user['password'])) {
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['username'] = $user['username'];
+            
+            // Redirect to the stored URL or dashboard
+            if (isset($_SESSION['redirect_after_login'])) {
+                $redirect = $_SESSION['redirect_after_login'];
+                unset($_SESSION['redirect_after_login']);
+                header("Location: " . $redirect);
             } else {
-                header('Location: user-dashboard.php');
+                header("Location: user-dashboard.php");
             }
             exit;
         } else {
-            header('Refresh:2; url=login.html');
-            echo "Invalid credentials. Redirecting back to login page...";
+            $_SESSION['login_error'] = "Invalid username/email or password";
+            header("Location: login.html");
             exit;
         }
     } catch (PDOException $e) {
-        echo "DB Error: " . $e->getMessage();
+        $_SESSION['login_error'] = "An error occurred. Please try again.";
+        header("Location: login.html");
+        exit;
     }
+} else {
+    header("Location: login.html");
+    exit;
 }
 ?>
