@@ -57,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':username'      => $username,
             ':password'      => $hashedPassword,
             ':profile_image' => $profile_image
+
         ]);
 
         $_SESSION['user_id']  = $pdo->lastInsertId();
@@ -66,10 +67,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: user-dashboard.php');
         exit;
     } catch (PDOException $e) {
+
         // If database insertion fails, delete the uploaded image
         if ($profile_image && file_exists($filepath)) {
             unlink($filepath);
         }
+
         echo "Error: " . $e->getMessage();
     }
 }

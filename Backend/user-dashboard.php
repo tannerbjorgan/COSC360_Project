@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+
 // Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
     $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
@@ -40,14 +41,17 @@ try {
 } catch (Exception $e) {
     die("An error occurred. Please try again later.");
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>User Dashboard - Blogging Platform</title>
+
     <link rel="stylesheet" href="../frontend/styles/common.css">
     <link rel="stylesheet" href="../frontend/styles/dashboard.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -55,13 +59,17 @@ try {
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
+
                 <a href="../frontend/index.html" class="logo">
+
                     <i class="fas fa-pen-fancy"></i>
                     <span>Blogging</span>
                 </a>
             </div>
 
+
             <button class="btn btn-primary btn-create-post" onclick="window.location.href='../frontend/create-post.html'">
+
                 <i class="fas fa-plus"></i>
                 <span>Create New Post</span>
             </button>
@@ -82,6 +90,16 @@ try {
                             </a>
                         </li>
                         <li>
+
+
+                            <a href="#" data-content="drafts">
+                                <i class="fas fa-edit"></i>
+                                <span>Drafts</span>
+                                <span class="badge">3</span>
+                            </a>
+                        </li>
+                        <li>
+
                             <a href="#" data-content="analytics">
                                 <i class="fas fa-chart-line"></i>
                                 <span>Analytics</span>
@@ -89,11 +107,15 @@ try {
                         </li>
                     </ul>
                 </div>
+
                 <div class="nav-section">
                     <h4>DISCOVER</h4>
                     <ul>
                         <li>
+
                             <a href="../frontend/discover.php">
+
+
                                 <i class="fas fa-compass"></i>
                                 <span>Explore</span>
                             </a>
@@ -115,12 +137,14 @@ try {
             </nav>
 
             <div class="sidebar-footer">
+
                 <a href="../frontend/user-profile.php" class="profile-section">
                     <div class="profile-image">
                         <img src="<?php echo htmlspecialchars($user['profile_image'] ? '../frontend/' . $user['profile_image'] : '../frontend/images/placeholder-profile.png'); ?>" alt="Profile">
                     </div>
                     <div class="profile-info">
                         <span class="username"><?php echo htmlspecialchars($user['username']); ?></span>
+
                         <span class="role">Content Creator</span>
                     </div>
                 </a>
@@ -128,6 +152,7 @@ try {
         </div>
 
         <div class="main-content">
+
             <div class="top-bar">
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
@@ -146,15 +171,18 @@ try {
             </div>
 
             <div class="dashboard-content" id="dashboardContent">
+
                 <div class="overview-section">
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-icon">
+
                                 <i class="fas fa-file-alt"></i>
                             </div>
                             <div class="stat-info">
                                 <h3>Total Posts</h3>
                                 <p id="totalPosts"><?php echo $stats['total_posts']; ?></p>
+
                             </div>
                         </div>
                         <div class="stat-card">
@@ -163,7 +191,9 @@ try {
                             </div>
                             <div class="stat-info">
                                 <h3>Total Likes</h3>
+
                                 <p id="totalLikes"><?php echo $stats['total_likes']; ?></p>
+
                             </div>
                         </div>
                         <div class="stat-card">
@@ -172,7 +202,9 @@ try {
                             </div>
                             <div class="stat-info">
                                 <h3>Comments</h3>
+
                                 <p id="totalComments"><?php echo $stats['total_comments']; ?></p>
+
                             </div>
                         </div>
                         <div class="stat-card">
@@ -181,11 +213,14 @@ try {
                             </div>
                             <div class="stat-info">
                                 <h3>Followers</h3>
+
                                 <p id="totalFollowers"><?php echo $stats['total_followers']; ?></p>
+
                             </div>
                         </div>
                     </div>
                 </div>
+
 
                 <div class="content-section">
                     <div class="section-header">
@@ -215,13 +250,16 @@ try {
                         <!-- Recent followers will be loaded dynamically -->
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
+
 
     <script>
         const initialDashboardContent = document.getElementById('dashboardContent').innerHTML;
     </script>
     <script src="../frontend/scripts/dashboard.js"></script>
+
 </body>
 </html>
