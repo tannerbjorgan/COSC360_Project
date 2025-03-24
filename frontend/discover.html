@@ -28,7 +28,7 @@
             <div class="auth-buttons">
                 <a href="login.html" class="btn btn-link">Log In</a>
                 <a href="signup.html" class="btn btn-primary">Get Started</a>
-        </div>
+            </div>
         </header>
 
         <main class="discover-main">
@@ -53,27 +53,7 @@
                     <!-- Trending Tab Content -->
                     <div class="tab-pane active" id="trending-tab">
                         <div class="trending-posts">
-                            <div class="trending-post">
-                                <span class="trending-number">01</span>
-                                <div class="trending-info">
-                                    <h4>The Future of AI in 2024</h4>
-                                    <span>15.2K views</span>
-                                </div>
-                            </div>
-                            <div class="trending-post">
-                                <span class="trending-number">02</span>
-                                <div class="trending-info">
-                                    <h4>Sustainable Living Guide</h4>
-                                    <span>12.8K views</span>
-                                </div>
-                            </div>
-                            <div class="trending-post">
-                                <span class="trending-number">03</span>
-                                <div class="trending-info">
-                                    <h4>Modern Web Development</h4>
-                                    <span>10.5K views</span>
-                                </div>
-                            </div>
+                            <!-- Trending posts will be injected here by discover.js -->
                         </div>
                     </div>
 
@@ -143,8 +123,8 @@
                             <span>Log in to create and share your stories</span>
                         </div>
                         <i class="fas fa-arrow-right"></i>
-                </a>
-            </div>
+                    </a>
+                </div>
             </aside>
 
             <section class="discover-content">
@@ -158,90 +138,10 @@
                             <i class="fas fa-list"></i>
                         </button>
                     </div>
-            </div>
+                </div>
 
                 <div class="posts-grid">
-                    <!-- Featured Post -->
-                    <a href="post.html?id=1" class="post-link">
-                        <article class="post-card featured">
-                            <div class="post-image">
-                                <img src="https://via.placeholder.com/600x400" alt="Featured post">
-                                <span class="category-tag">Technology</span>
-                            </div>
-                            <div class="post-content">
-                                <h3>The Future of Web Development: Trends to Watch in 2024</h3>
-                                <p>Explore the latest trends shaping the future of web development, from AI integration to new frameworks...</p>
-                                <div class="post-meta">
-                                    <div class="author">
-                                        <img src="https://via.placeholder.com/30" alt="Author">
-                                        <span>Sarah Parker</span>
-                                    </div>
-                                    <span class="read-time">5 min read</span>
-                                </div>
-                            </div>
-                        </article>
-                    </a>
-
-                    <!-- Regular Posts -->
-                    <a href="post.html?id=2" class="post-link">
-                        <article class="post-card">
-                            <div class="post-image">
-                                <img src="https://via.placeholder.com/400x300" alt="Post">
-                                <span class="category-tag">Travel</span>
-                            </div>
-                            <div class="post-content">
-                                <h3>Hidden Gems: Unexplored Destinations in Europe</h3>
-                                <p>Discover beautiful locations off the beaten path...</p>
-                                <div class="post-meta">
-                                    <div class="author">
-                                        <img src="https://via.placeholder.com/30" alt="Author">
-                                        <span>John Smith</span>
-                                    </div>
-                                    <span class="read-time">4 min read</span>
-                                </div>
-                            </div>
-                        </article>
-                    </a>
-
-                    <a href="post.html?id=3" class="post-link">
-                        <article class="post-card">
-                            <div class="post-image">
-                                <img src="https://via.placeholder.com/400x300" alt="Post">
-                                <span class="category-tag">Food</span>
-                            </div>
-                            <div class="post-content">
-                                <h3>Traditional Italian Pasta: A Complete Guide</h3>
-                                <p>Learn the secrets of authentic Italian pasta making...</p>
-                                <div class="post-meta">
-                                    <div class="author">
-                                        <img src="https://via.placeholder.com/30" alt="Author">
-                                        <span>Emma Wilson</span>
-                                    </div>
-                                    <span class="read-time">6 min read</span>
-                                </div>
-                            </div>
-                        </article>
-                    </a>
-
-                    <a href="post.html?id=4" class="post-link">
-                        <article class="post-card">
-                            <div class="post-image">
-                                <img src="https://via.placeholder.com/400x300" alt="Post">
-                                <span class="category-tag">Art</span>
-                            </div>
-                            <div class="post-content">
-                                <h3>Digital Art: From Beginner to Pro</h3>
-                                <p>Master the fundamentals of digital art creation...</p>
-                                <div class="post-meta">
-                                    <div class="author">
-                                        <img src="https://via.placeholder.com/30" alt="Author">
-                                        <span>Mike Chen</span>
-                                    </div>
-                                    <span class="read-time">8 min read</span>
-                                </div>
-                            </div>
-                        </article>
-                    </a>
+                    <!-- Posts will be injected dynamically by discover.js (using get_more_posts.php) -->
                 </div>
 
                 <div class="load-more">
@@ -269,10 +169,10 @@
             </div>
             <div class="footer-bottom">
                 <p>&copy; 2024 Blogging Platform. All rights reserved.</p>
-        </div>
+            </div>
         </footer>
     </div>
 
-    <script src="scripts/script.js"></script>
+    <script src="scripts/discover.js"></script>
 </body>
 </html>
