@@ -1,44 +1,52 @@
 <?php
 header('Content-Type: application/json');
+session_start();
 
-$user_id = 1;
-
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "dfeng06";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die(json_encode(['error' => 'Connection failed: ' . $conn->connect_error]));
+if (!isset($_SESSION['user_id'])) {
+    echo json_encode([
+        'success' => false,
+        'error' => 'User not authenticated'
+    ]);
+    exit;
 }
 
-$stmt = $conn->prepare("SELECT COALESCE(SUM(view_count),0) AS total_views, 
-                               COALESCE(SUM(like_count),0) AS total_likes, 
-                               COALESCE(SUM(comment_count),0) AS total_comments
-                        FROM posts
-                        WHERE user_id = ?");
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$stats = $result->fetch_assoc();
-$stmt->close();
+require_once('../../Backend/config.php');
 
-$stmt2 = $conn->prepare("SELECT COUNT(*) AS total_followers FROM followers WHERE following_id = ?");
-$stmt2->bind_param("i", $user_id);
-$stmt2->execute();
-$result2 = $stmt2->get_result();
-$followers = $result2->fetch_assoc();
-$stmt2->close();
+try {
+    $userId = $_SESSION['user_id'];
+    
+    // Get user stats
+    $statsQuery = "SELECT 
+        (SELECT COUNT(*) FROM posts WHERE user_id = :user_id) as total_posts,
+        (SELECT COUNT(*) FROM likes WHERE post_id IN (SELECT id FROM posts WHERE user_id = :user_id)) as total_likes,
+        (SELECT COUNT(*) FROM comments WHERE post_id IN (SELECT id FROM posts WHERE user_id = :user_id)) as total_comments,
+        (SELECT COUNT(*) FROM followers WHERE followed_id = :user_id) as total_followers";
 
-$conn->close();
+    $stmt = $pdo->prepare($statsQuery);
+    $stmt->execute([':user_id' => $userId]);
+    $stats = $stmt->fetch(PDO::FETCH_ASSOC);
 
-$userStats = array_merge($stats, $followers);
+    echo json_encode([
+        'success' => true,
+        'stats' => [
+            'total_posts' => (int)$stats['total_posts'],
+            'total_likes' => (int)$stats['total_likes'],
+            'total_comments' => (int)$stats['total_comments'],
+            'total_followers' => (int)$stats['total_followers']
+        ]
+    ]);
 
-echo json_encode([
-    'totalViews' => $userStats['total_views'],
-    'totalLikes' => $userStats['total_likes'],
-    'totalComments' => $userStats['total_comments'],
-    'totalFollowers' => $userStats['total_followers']
-]);
+} catch (PDOException $e) {
+    error_log("Database error in get_user_stats.php: " . $e->getMessage());
+    echo json_encode([
+        'success' => false,
+        'error' => 'Database error occurred'
+    ]);
+} catch (Exception $e) {
+    error_log("General error in get_user_stats.php: " . $e->getMessage());
+    echo json_encode([
+        'success' => false,
+        'error' => 'An error occurred'
+    ]);
+}
 ?>
