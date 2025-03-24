@@ -8,6 +8,11 @@
     font-family: 'Inter', sans-serif;
     color: black;
   }
+
+  .likes i.liked {
+    color: red !important;
+  }
+   
   
   .top-bar {
     display: flex;

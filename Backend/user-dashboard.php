@@ -1,17 +1,57 @@
 <?php
 session_start();
+
+
+// Check if user is logged in
 if (!isset($_SESSION['user_id'])) {
+    $_SESSION['redirect_after_login'] = $_SERVER['REQUEST_URI'];
     header("Location: login.html");
     exit;
 }
+
+require_once 'config.php';
+
+$userId = $_SESSION['user_id'];
+
+try {
+    // Get user information
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
+    $stmt->execute([$userId]);
+    $user = $stmt->fetch();
+
+    if (!$user) {
+        session_destroy();
+        header("Location: login.html");
+        exit;
+    }
+
+    // Get user stats
+    $statsQuery = "SELECT 
+        (SELECT COUNT(*) FROM posts WHERE user_id = ?) as total_posts,
+        (SELECT COUNT(*) FROM likes WHERE post_id IN (SELECT id FROM posts WHERE user_id = ?)) as total_likes,
+        (SELECT COUNT(*) FROM comments WHERE post_id IN (SELECT id FROM posts WHERE user_id = ?)) as total_comments,
+        (SELECT COUNT(*) FROM followers WHERE following_id = ?) as total_followers";
+
+    $stmt = $pdo->prepare($statsQuery);
+    $stmt->execute([$userId, $userId, $userId, $userId]);
+    $stats = $stmt->fetch(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    die("A database error occurred. Please try again later.");
+} catch (Exception $e) {
+    die("An error occurred. Please try again later.");
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>User Dashboard - Blogging Platform</title>
-    <link rel="stylesheet" href="/frontend/styles/common.css">
-    <link rel="stylesheet" href="/frontend/styles/dashboard.css">
+
+    <link rel="stylesheet" href="../frontend/styles/common.css">
+    <link rel="stylesheet" href="../frontend/styles/dashboard.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
@@ -19,13 +59,17 @@ if (!isset($_SESSION['user_id'])) {
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <a href="index.html" class="logo">
+
+                <a href="../frontend/index.html" class="logo">
+
                     <i class="fas fa-pen-fancy"></i>
                     <span>Blogging</span>
                 </a>
             </div>
 
-            <button class="btn btn-primary btn-create-post" onclick="window.location.href='create-post.html'">
+
+            <button class="btn btn-primary btn-create-post" onclick="window.location.href='../frontend/create-post.html'">
+
                 <i class="fas fa-plus"></i>
                 <span>Create New Post</span>
             </button>
@@ -46,6 +90,8 @@ if (!isset($_SESSION['user_id'])) {
                             </a>
                         </li>
                         <li>
+
+
                             <a href="#" data-content="drafts">
                                 <i class="fas fa-edit"></i>
                                 <span>Drafts</span>
@@ -53,6 +99,7 @@ if (!isset($_SESSION['user_id'])) {
                             </a>
                         </li>
                         <li>
+
                             <a href="#" data-content="analytics">
                                 <i class="fas fa-chart-line"></i>
                                 <span>Analytics</span>
@@ -65,7 +112,10 @@ if (!isset($_SESSION['user_id'])) {
                     <h4>DISCOVER</h4>
                     <ul>
                         <li>
-                            <a href="#" data-content="explore">
+
+                            <a href="../frontend/discover.php">
+
+
                                 <i class="fas fa-compass"></i>
                                 <span>Explore</span>
                             </a>
@@ -87,12 +137,14 @@ if (!isset($_SESSION['user_id'])) {
             </nav>
 
             <div class="sidebar-footer">
-                <a href="user-profile.html" class="profile-section">
+
+                <a href="../frontend/user-profile.php" class="profile-section">
                     <div class="profile-image">
-                        <img src="placeholder-profile.png" alt="Profile">
+                        <img src="<?php echo htmlspecialchars($user['profile_image'] ? '../frontend/' . $user['profile_image'] : '../frontend/images/placeholder-profile.png'); ?>" alt="Profile">
                     </div>
                     <div class="profile-info">
-                        <span class="username">John Doe</span>
+                        <span class="username"><?php echo htmlspecialchars($user['username']); ?></span>
+
                         <span class="role">Content Creator</span>
                     </div>
                 </a>
@@ -104,38 +156,33 @@ if (!isset($_SESSION['user_id'])) {
             <div class="top-bar">
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
-                    <input type="text" placeholder="Search posts, topics, or users..." class="search-input">
+                    <input type="text" placeholder="Search posts, topics, or users..." class="search-input" id="searchInput">
                 </div>
                 <div class="top-bar-actions">
-                    <button class="notification-btn">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">5</span>
-                    </button>
-                    
-                    <a href="logout.php" class="btn btn-secondary">Logout</a>
-
-                    <div class="user-menu">
-                        <button class="user-menu-btn">
-                            <img src="placeholder-profile.png" alt="Profile">
-                            <a href="user-profile.html" class="username-link">John Doe</a>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
+                    <a href="../frontend/create-post.html" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        <span>Create Post</span>
+                    </a>
+                    <a href="../frontend/user-profile.php" class="btn btn-link">
+                        <i class="fas fa-user"></i>
+                        <span>Profile</span>
+                    </a>
                 </div>
             </div>
-            <div class="dashboard-content">
 
+            <div class="dashboard-content" id="dashboardContent">
 
                 <div class="overview-section">
                     <div class="stats-grid">
                         <div class="stat-card">
                             <div class="stat-icon">
-                                <i class="fas fa-eye"></i>
+
+                                <i class="fas fa-file-alt"></i>
                             </div>
                             <div class="stat-info">
-                                <h3>Total Views</h3>
-                                <p>12.5K</p>
-                                <span class="trend positive">+8.2% <i class="fas fa-arrow-up"></i></span>
+                                <h3>Total Posts</h3>
+                                <p id="totalPosts"><?php echo $stats['total_posts']; ?></p>
+
                             </div>
                         </div>
                         <div class="stat-card">
@@ -144,8 +191,9 @@ if (!isset($_SESSION['user_id'])) {
                             </div>
                             <div class="stat-info">
                                 <h3>Total Likes</h3>
-                                <p>1.2K</p>
-                                <span class="trend positive">+12.4% <i class="fas fa-arrow-up"></i></span>
+
+                                <p id="totalLikes"><?php echo $stats['total_likes']; ?></p>
+
                             </div>
                         </div>
                         <div class="stat-card">
@@ -154,8 +202,9 @@ if (!isset($_SESSION['user_id'])) {
                             </div>
                             <div class="stat-info">
                                 <h3>Comments</h3>
-                                <p>284</p>
-                                <span class="trend positive">+3.7% <i class="fas fa-arrow-up"></i></span>
+
+                                <p id="totalComments"><?php echo $stats['total_comments']; ?></p>
+
                             </div>
                         </div>
                         <div class="stat-card">
@@ -164,125 +213,41 @@ if (!isset($_SESSION['user_id'])) {
                             </div>
                             <div class="stat-info">
                                 <h3>Followers</h3>
-                                <p>892</p>
-                                <span class="trend positive">+5.3% <i class="fas fa-arrow-up"></i></span>
+
+                                <p id="totalFollowers"><?php echo $stats['total_followers']; ?></p>
+
                             </div>
                         </div>
                     </div>
                 </div>
+
+
                 <div class="content-section">
                     <div class="section-header">
                         <h2>Recent Posts</h2>
-                        <a href="#" class="btn btn-link">View All <i class="fas fa-arrow-right"></i></a>
+                        <a href="#" class="btn btn-link" data-content="my-posts">View All <i class="fas fa-arrow-right"></i></a>
                     </div>
-                    <div class="posts-grid">
-                        <div class="post-card">
-                            <div class="post-image">
-                                <img src="https://via.placeholder.com/300x200" alt="Post thumbnail">
-                                <span class="category-tag">Technology</span>
-                            </div>
-                            <div class="post-content">
-                                <h3>Getting Started with Web Development in 2024</h3>
-                                <p>A comprehensive guide for beginners looking to start their journey in web development...</p>
-                                <div class="post-meta">
-                                    <div class="post-stats">
-                                        <span><i class="fas fa-eye"></i> 1.2K</span>
-                                        <span><i class="fas fa-heart"></i> 45</span>
-                                        <span><i class="fas fa-comment"></i> 12</span>
-                                    </div>
-                                    <span class="post-date">2 days ago</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="post-card">
-                            <div class="post-image">
-                                <img src="https://via.placeholder.com/300x200" alt="Post thumbnail">
-                                <span class="category-tag">Design</span>
-                            </div>
-                            <div class="post-content">
-                                <h3>UI Design Trends to Watch in 2024</h3>
-                                <p>Exploring the latest trends in user interface design and what's coming next...</p>
-                                <div class="post-meta">
-                                    <div class="post-stats">
-                                        <span><i class="fas fa-eye"></i> 856</span>
-                                        <span><i class="fas fa-heart"></i> 32</span>
-                                        <span><i class="fas fa-comment"></i> 8</span>
-                                    </div>
-                                    <span class="post-date">4 days ago</span>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="posts-grid" id="recentPosts">
+                        <!-- Posts will be loaded dynamically -->
                     </div>
                 </div>
 
-                <div class="content-grid">
-                    <div class="content-section">
-                        <div class="section-header">
-                            <h2>Recent Activity</h2>
-                            <a href="#" class="btn btn-link">View All</a>
-                        </div>
-                        <div class="activity-list">
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fas fa-heart"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <p><strong>Sarah Parker</strong> liked your post "Getting Started with Web Development"</p>
-                                    <span class="activity-time">2 hours ago</span>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fas fa-comment"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <p><strong>Mike Chen</strong> commented on your post "UI Design Trends"</p>
-                                    <span class="activity-time">5 hours ago</span>
-                                </div>
-                            </div>
-                            <div class="activity-item">
-                                <div class="activity-icon">
-                                    <i class="fas fa-user-plus"></i>
-                                </div>
-                                <div class="activity-content">
-                                    <p><strong>Emma Wilson</strong> started following you</p>
-                                    <span class="activity-time">1 day ago</span>
-                                </div>
-                            </div>
-                        </div>
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>Following</h2>
+                        <a href="#" class="btn btn-link" data-content="following">View All <i class="fas fa-arrow-right"></i></a>
                     </div>
+                    <div class="following-grid" id="followingUsers">
+                        <!-- Following users will be loaded dynamically -->
+                    </div>
+                </div>
 
-                    <div class="content-section">
-                        <div class="section-header">
-                            <h2>Top Followers</h2>
-                            <a href="#" class="btn btn-link">View All</a>
-                        </div>
-                        <div class="followers-list">
-                            <div class="follower-item">
-                                <img src="https://via.placeholder.com/40" alt="Follower" class="follower-avatar">
-                                <div class="follower-info">
-                                    <h4>Sarah Parker</h4>
-                                    <span>UX Designer</span>
-                                </div>
-                                <button class="btn btn-outline">Following</button>
-                            </div>
-                            <div class="follower-item">
-                                <img src="https://via.placeholder.com/40" alt="Follower" class="follower-avatar">
-                                <div class="follower-info">
-                                    <h4>Mike Chen</h4>
-                                    <span>Developer</span>
-                                </div>
-                                <button class="btn btn-outline">Following</button>
-                            </div>
-                            <div class="follower-item">
-                                <img src="https://via.placeholder.com/40" alt="Follower" class="follower-avatar">
-                                <div class="follower-info">
-                                    <h4>Emma Wilson</h4>
-                                    <span>Content Creator</span>
-                                </div>
-                                <button class="btn btn-outline">Following</button>
-                            </div>
-                        </div>
+                <div class="content-section">
+                    <div class="section-header">
+                        <h2>Recent Followers</h2>
+                    </div>
+                    <div class="followers-grid" id="recentFollowers">
+                        <!-- Recent followers will be loaded dynamically -->
                     </div>
                 </div>
 
@@ -290,6 +255,11 @@ if (!isset($_SESSION['user_id'])) {
         </div>
     </div>
 
-    <script src="/frontend/scripts/script.js"></script>
+
+    <script>
+        const initialDashboardContent = document.getElementById('dashboardContent').innerHTML;
+    </script>
+    <script src="../frontend/scripts/dashboard.js"></script>
+
 </body>
 </html>
