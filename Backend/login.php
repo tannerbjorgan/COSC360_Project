@@ -1,44 +1,56 @@
 <?php
-session_start();
-
+session_start(); 
 require_once 'config.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = trim($_POST['username'] ?? ''); 
+    $password = trim($_POST['password'] ?? ''); 
+
+    if (empty($username) || empty($password)) {
+        header("Location: login.html?error=empty");
+        exit;
+    }
 
     try {
-        // Check if input is email or username
         $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ? OR email = ?");
         $stmt->execute([$username, $username]);
-        $user = $stmt->fetch();
+        $user = $stmt->fetch(PDO::FETCH_ASSOC); 
 
         if ($user && password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            
-            // Redirect to the stored URL or dashboard
+            session_regenerate_id(true);
+            $_SESSION['user_id']   = $user['id'];
+            $_SESSION['username']  = $user['username'];
+            $_SESSION['is_admin']  = $user['is_admin'];
+
             if (isset($_SESSION['redirect_after_login'])) {
                 $redirect = $_SESSION['redirect_after_login'];
                 unset($_SESSION['redirect_after_login']);
-                header("Location: " . $redirect);
-            } else {
-                header("Location: user-dashboard.php");
+                header("Location: $redirect");
+                exit;
             }
-            exit;
+            if ($_SESSION['is_admin'] == 1) {
+                header('Location: admin-dashboard.php');
+                exit;
+            } else {
+                header('Location: user-dashboard.php');
+                exit;
+            }
+
         } else {
-            $_SESSION['login_error'] = "Invalid username/email or password";
-            header("Location: login.html");
-            exit;
+            if (!$user) {
+                header("Location: login.html?error=nouser");
+            } else {
+                header("Location: login.html?error=wrongpass");
+            }
+            exit; 
         }
     } catch (PDOException $e) {
-        $_SESSION['login_error'] = "An error occurred. Please try again.";
-        header("Location: login.html");
+        error_log("Login PDOException: " . $e->getMessage()); 
+        header("Location: login.html?error=server");
         exit;
     }
 } else {
-    header("Location: login.html");
+    header("Location: login.html?error=nopost");
     exit;
-
 }
 ?>
