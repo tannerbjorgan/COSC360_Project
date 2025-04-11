@@ -27,25 +27,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("Error: File too large. Maximum size is 5MB.");
         }
 
-        // Set the upload directory (assumes the folder already exists)
-        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . "/file_uploads/";
-        
-        // Generate a unique filename
+        // Create uploads directory if it doesn't exist
+        $upload_dir = '../frontend/images/profile_images/';
+        if (!file_exists($upload_dir)) {
+            mkdir($upload_dir, 0777, true);
+        }
+
+        // Generate unique filename
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $filename = uniqid() . '_' . time() . '.' . $extension;
         $filepath = $upload_dir . $filename;
 
-        // Attempt to move the uploaded file to the target directory.
+        // Move uploaded file
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
-            // Save a relative path for later use (e.g., for displaying the image)
-            $profile_image = "file_uploads/" . $filename;
+            $profile_image = 'images/profile_images/' . $filename;
         } else {
             die("Error: Failed to save image.");
         }
     }
 
     try {
-        // Insert user (is_admin=0 for a normal user)
+        // Insert user (is_admin=0, then normal user)
         $sql = "INSERT INTO users (name, email, username, password, profile_image, is_admin)
                 VALUES (:name, :email, :username, :password, :profile_image, 0)";
         $stmt = $pdo->prepare($sql);
@@ -55,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':username'      => $username,
             ':password'      => $hashedPassword,
             ':profile_image' => $profile_image
+
         ]);
 
         $_SESSION['user_id']  = $pdo->lastInsertId();
@@ -64,7 +67,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: user-dashboard.php');
         exit;
     } catch (PDOException $e) {
-        // If database insertion fails, delete the uploaded image if it exists.
+
+        // If database insertion fails, delete the uploaded image
         if ($profile_image && file_exists($filepath)) {
             unlink($filepath);
         }
