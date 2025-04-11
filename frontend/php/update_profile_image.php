@@ -30,7 +30,7 @@ if ($file['size'] > $max_size) {
 }
 
 // Create uploads directory if it doesn't exist
-$upload_dir = '../images/profile_images/';
+$upload_dir = '../../../file_uploads';
 if (!file_exists($upload_dir)) {
     mkdir($upload_dir, 0777, true);
 }

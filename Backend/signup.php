@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         // Use absolute path for the uploads folder.
-        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . "/COSC360_PROJECT/frontend/images/profile_images/";
+        $upload_dir = $_SERVER['DOCUMENT_ROOT'] . "/file_uploads/";
         if (!file_exists($upload_dir)) {
             // Attempt to create the directory if it doesn't exist.
             if (!mkdir($upload_dir, 0777, true)) {
