@@ -27,36 +27,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("Error: File too large. Maximum size is 5MB.");
         }
 
-        // Use absolute path for the uploads folder.
+        // Set the upload directory (assumes the folder already exists)
         $upload_dir = $_SERVER['DOCUMENT_ROOT'] . "/file_uploads/";
-        if (!file_exists($upload_dir)) {
-            // Attempt to create the directory if it doesn't exist.
-            if (!mkdir($upload_dir, 0777, true)) {
-                die("Error: Failed to create directory: " . $upload_dir);
-            }
-        }
         
-        // Debug: Confirm temporary file exists.
-        if (!is_uploaded_file($file['tmp_name'])) {
-            die("Error: Temporary file not found.");
-        }
-
-        // Generate unique filename.
+        // Generate a unique filename
         $extension = pathinfo($file['name'], PATHINFO_EXTENSION);
         $filename = uniqid() . '_' . time() . '.' . $extension;
         $filepath = $upload_dir . $filename;
 
-        // Attempt to move the uploaded file.
+        // Attempt to move the uploaded file to the target directory.
         if (move_uploaded_file($file['tmp_name'], $filepath)) {
-            // Save a relative path for later use (e.g., storing in the database).
-            $profile_image = "images/profile_images/" . $filename;
+            // Save a relative path for later use (e.g., for displaying the image)
+            $profile_image = "file_uploads/" . $filename;
         } else {
             die("Error: Failed to save image.");
         }
     }
 
     try {
-        // Insert new user data.
+        // Insert user (is_admin=0 for a normal user)
         $sql = "INSERT INTO users (name, email, username, password, profile_image, is_admin)
                 VALUES (:name, :email, :username, :password, :profile_image, 0)";
         $stmt = $pdo->prepare($sql);
@@ -71,14 +60,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['user_id']  = $pdo->lastInsertId();
         $_SESSION['is_admin'] = 0;
 
-        // Redirect to the user dashboard.
+        // Redirect to user dashboard
         header('Location: user-dashboard.php');
         exit;
     } catch (PDOException $e) {
-        // If the database insertion fails, remove the uploaded file if it exists.
+        // If database insertion fails, delete the uploaded image if it exists.
         if ($profile_image && file_exists($filepath)) {
             unlink($filepath);
         }
+
         echo "Error: " . $e->getMessage();
     }
 }
