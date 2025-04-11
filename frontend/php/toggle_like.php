@@ -2,61 +2,67 @@
 header('Content-Type: application/json');
 session_start();
 
+// Check if the user is authenticated.
 if (!isset($_SESSION['user_id'])) {
-    die(json_encode(['error' => 'User not authenticated']));
+    echo json_encode(['error' => 'User not authenticated']);
+    exit;
 }
 
+// Read JSON input from the request body.
 $input = json_decode(file_get_contents('php://input'), true);
 if (!isset($input['post_id'])) {
-    die(json_encode(['error' => 'Post ID is required']));
+    echo json_encode(['error' => 'Post ID is required']);
+    exit;
 }
 
-$servername = "localhost";
-$username = "dfeng06";
-$password = "dfeng06";
-$dbname = "dfeng06";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    die(json_encode(['error' => 'Connection failed: ' . $conn->connect_error]));
-}
-
-$user_id = $_SESSION['user_id'];
 $post_id = (int)$input['post_id'];
+$user_id = $_SESSION['user_id'];
 
-// Check if the user has already liked the post
-$check_sql = "SELECT id FROM likes WHERE user_id = ? AND post_id = ?";
-$check_stmt = $conn->prepare($check_sql);
-$check_stmt->bind_param("ii", $user_id, $post_id);
-$check_stmt->execute();
-$check_result = $check_stmt->get_result();
+require_once('../../Backend/config.php'); // This should create a PDO connection in $pdo.
 
-if ($check_result->num_rows > 0) {
-    // Unlike the post
-    $delete_sql = "DELETE FROM likes WHERE user_id = ? AND post_id = ?";
-    $delete_stmt = $conn->prepare($delete_sql);
-    $delete_stmt->bind_param("ii", $user_id, $post_id);
-    $delete_stmt->execute();
-} else {
-    // Like the post
-    $insert_sql = "INSERT INTO likes (user_id, post_id) VALUES (?, ?)";
-    $insert_stmt = $conn->prepare($insert_sql);
-    $insert_stmt->bind_param("ii", $user_id, $post_id);
-    $insert_stmt->execute();
+try {
+    // Check if the user already liked the post.
+    $checkSQL = "SELECT id FROM likes WHERE user_id = :user_id AND post_id = :post_id";
+    $stmt = $pdo->prepare($checkSQL);
+    $stmt->execute([
+        'user_id' => $user_id,
+        'post_id' => $post_id
+    ]);
+
+    if ($stmt->rowCount() > 0) {
+        // If the like exists, remove it (unlike).
+        $deleteSQL = "DELETE FROM likes WHERE user_id = :user_id AND post_id = :post_id";
+        $deleteStmt = $pdo->prepare($deleteSQL);
+        $deleteStmt->execute([
+            'user_id' => $user_id,
+            'post_id' => $post_id
+        ]);
+    } else {
+        // Otherwise, add a new like.
+        $insertSQL = "INSERT INTO likes (user_id, post_id) VALUES (:user_id, :post_id)";
+        $insertStmt = $pdo->prepare($insertSQL);
+        $insertStmt->execute([
+            'user_id' => $user_id,
+            'post_id' => $post_id
+        ]);
+    }
+    
+    // Get the updated like count.
+    $countSQL = "SELECT COUNT(*) as likes_count FROM likes WHERE post_id = :post_id";
+    $countStmt = $pdo->prepare($countSQL);
+    $countStmt->execute(['post_id' => $post_id]);
+    $row = $countStmt->fetch(PDO::FETCH_ASSOC);
+    $likes_count = $row ? (int)$row['likes_count'] : 0;
+    
+    echo json_encode([
+        'success' => true,
+        'likes_count' => $likes_count
+    ]);
+    
+} catch (Exception $e) {
+    echo json_encode([
+        'success' => false,
+        'error' => 'Database error: ' . $e->getMessage()
+    ]);
 }
-
-// Get updated like count
-$count_sql = "SELECT COUNT(*) as likes_count FROM likes WHERE post_id = ?";
-$count_stmt = $conn->prepare($count_sql);
-$count_stmt->bind_param("i", $post_id);
-$count_stmt->execute();
-$count_result = $count_stmt->get_result();
-$likes_count = $count_result->fetch_assoc()['likes_count'];
-
-echo json_encode([
-    'success' => true,
-    'likes_count' => (int)$likes_count
-]);
-
-$conn->close();
-?> 
+?>

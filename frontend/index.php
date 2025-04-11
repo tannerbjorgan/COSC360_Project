@@ -35,7 +35,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                     <a href="../frontend/user-profile.php" class="btn btn-primary">Profile</a>
                 <?php else: ?>
                     <a href="../Backend/login.php" class="btn btn-link">Log In</a>
-                    <a href="../Backend/signup.php" class="btn btn-primary">Get Started</a>
+                    <a href="../Backend/signup.html" class="btn btn-primary">Get Started</a>
                 <?php endif; ?>
             </div>
         </header>
@@ -49,7 +49,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                         <?php if ($isLoggedIn): ?>
                             <a href="../Backend/user-dashboard.php" class="btn btn-action">Start Writing <i class="fas fa-arrow-right"></i></a>
                         <?php else: ?>
-                            <a href="../Backend/signup.php" class="btn btn-action">Start Writing <i class="fas fa-arrow-right"></i></a>
+                            <a href="../Backend/signup.html" class="btn btn-action">Start Writing <i class="fas fa-arrow-right"></i></a>
                         <?php endif; ?>
                         <a href="discover.php" class="btn btn-secondary">Explore Posts</a>
                     </div>
@@ -105,7 +105,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                     <?php if ($isLoggedIn): ?>
                         <a href="../Backend/user-dashboard.php" class="btn btn-action">Go to Dashboard</a>
                     <?php else: ?>
-                        <a href="../Backend/signup.php" class="btn btn-action">Create Your Account</a>
+                        <a href="../Backend/signup.html" class="btn btn-action">Create Your Account</a>
                     <?php endif; ?>
                 </div>
             </section>
@@ -133,6 +133,5 @@ $isLoggedIn = isset($_SESSION['user_id']);
         </footer>
     </div>
 
-    <script src="scripts/script.js"></script>
 </body>
 </html>

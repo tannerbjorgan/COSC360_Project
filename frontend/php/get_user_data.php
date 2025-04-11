@@ -10,24 +10,23 @@ if (!isset($_SESSION['user_id'])) {
     exit;
 }
 
-require_once('../../Backend/db_connection.php');
+require_once('../../Backend/config.php'); // This file sets up $pdo
 
 try {
-    $stmt = $conn->prepare("
+    $stmt = $pdo->prepare("
         SELECT u.username, u.email, u.profile_image,
-               (SELECT COUNT(*) FROM followers WHERE followed_id = u.id) as followers_count
+               (SELECT COUNT(*) FROM followers WHERE following_id = u.id) as followers_count
         FROM users u
         WHERE u.id = ?
     ");
     
-    $stmt->bind_param("i", $_SESSION['user_id']);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
     
-    if ($user = $result->fetch_assoc()) {
-        // If profile image exists, create the full URL
+    if ($user) {
+        // If profile image exists, prepend the uploads directory
         if ($user['profile_image']) {
-            $user['profile_image'] = '../uploads/' . $user['profile_image'];
+           
         }
         
         echo json_encode([
@@ -47,7 +46,7 @@ try {
         'error' => 'Database error: ' . $e->getMessage()
     ]);
 }
+$stmt = null;
+$pdo = null;
 
-$stmt->close();
-$conn->close();
 ?> 

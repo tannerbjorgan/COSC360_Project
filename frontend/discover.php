@@ -36,7 +36,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
                     <a href="../Backend/logout.php" class="btn btn-primary">Logout</a>
                 <?php else: ?>
                     <a href="../Backend/login.php" class="btn btn-link">Log In</a>
-                    <a href="../Backend/signup.php" class="btn btn-primary">Get Started</a>
+                    <a href="../Backend/signup.html" class="btn btn-primary">Get Started</a>
                 <?php endif; ?>
             </div>
         </header>

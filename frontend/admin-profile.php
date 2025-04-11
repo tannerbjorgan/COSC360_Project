@@ -1,6 +1,7 @@
 <?php
 session_start();
 
+// Ensure the user is logged in.
 if (!isset($_SESSION['user_id'])) {
     header("Location: ../Backend/login.html");
     exit;
@@ -9,9 +10,10 @@ if (!isset($_SESSION['user_id'])) {
 require_once '../Backend/config.php';
 
 try {
+    // Query the user's data.
     $stmt = $pdo->prepare("SELECT * FROM users WHERE id = ?");
     $stmt->execute([$_SESSION['user_id']]);
-    $user = $stmt->fetch();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$user) {
         session_destroy();
@@ -19,7 +21,7 @@ try {
         exit;
     }
 
-    // Get followers count
+    // Get followers count for the user.
     $stmt = $pdo->prepare("SELECT COUNT(*) FROM followers WHERE following_id = ?");
     $stmt->execute([$_SESSION['user_id']]);
     $followersCount = $stmt->fetchColumn();
@@ -33,7 +35,7 @@ try {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>User Profile - Blogging Platform</title>
+  <title>Admin Profile - Blogging Platform</title>
   <link rel="stylesheet" href="styles/common.css" />
   <link rel="stylesheet" href="styles/profile.css" />
 </head>
@@ -45,7 +47,11 @@ try {
 
     <div class="profile-row user-id-row">
       <div class="profile-image-container">
-        <img id="profileImage" src="<?php echo htmlspecialchars($user['profile_image'] ? $user['profile_image'] : 'images/placeholder-profile.png'); ?>" alt="Profile Image" style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%;" >
+        <!-- Display the user's profile image; if not set, fall back to a placeholder -->
+        <img id="profileImage" 
+             src="<?php echo htmlspecialchars($user['profile_image'] ? $user['profile_image'] : 'images/placeholder-profile.png'); ?>" 
+             alt="Profile Image" 
+             style="width: 150px; height: 150px; object-fit: cover; border-radius: 50%;">
         <button id="changeImageBtn" class="btn btn-primary">Change Image</button>
       </div>
       <span id="userId" class="user-id" style="margin-left: 0;"><?php echo htmlspecialchars($user['username']); ?></span>
@@ -73,7 +79,7 @@ try {
     <div class="profile-row">
       <span class="profile-label">Followers:</span>
       <div class="profile-right">
-        <span id="followersCount" class="profile-value"><?php echo $followersCount; ?></span>
+        <span id="followersCount" class="profile-value"><?php echo htmlspecialchars($followersCount); ?></span>
       </div>
     </div>
     <hr />
@@ -92,6 +98,7 @@ try {
     </div>
   </div>
 
+  <!-- Modal for updating profile image -->
   <div id="imageModal" class="modal">
     <div class="modal-overlay"></div>
     <div class="modal-content">
@@ -112,6 +119,7 @@ try {
     </div>
   </div>
 
+  <!-- Modal for updating email -->
   <div id="emailModal" class="modal">
     <div class="modal-overlay"></div>
     <div class="modal-content">
@@ -124,6 +132,7 @@ try {
     </div>
   </div>
 
+  <!-- Modal for updating password -->
   <div id="passwordModal" class="modal">
     <div class="modal-overlay"></div>
     <div class="modal-content">
@@ -141,4 +150,4 @@ try {
 
   <script src="scripts/user-profile.js"></script>
 </body>
-</html> 
+</html>

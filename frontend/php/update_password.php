@@ -5,12 +5,12 @@ session_start();
 if (!isset($_SESSION['user_id'])) {
     echo json_encode([
         'success' => false,
-        'error' => 'User not authenticated'
+        'error'   => 'User not authenticated'
     ]);
     exit;
 }
 
-// Get JSON data
+// Get JSON data from the request body.
 $data = json_decode(file_get_contents('php://input'), true);
 $old_password = isset($data['old_password']) ? $data['old_password'] : '';
 $new_password = isset($data['new_password']) ? $data['new_password'] : '';
@@ -18,7 +18,7 @@ $new_password = isset($data['new_password']) ? $data['new_password'] : '';
 if (!$old_password || !$new_password) {
     echo json_encode([
         'success' => false,
-        'error' => 'Missing required fields'
+        'error'   => 'Missing required fields'
     ]);
     exit;
 }
@@ -26,35 +26,33 @@ if (!$old_password || !$new_password) {
 if (strlen($new_password) < 6) {
     echo json_encode([
         'success' => false,
-        'error' => 'New password must be at least 6 characters long'
+        'error'   => 'New password must be at least 6 characters long'
     ]);
     exit;
 }
 
-require_once('../../Backend/db_connection.php');
+require_once('../../Backend/config.php');  // This file should create a PDO connection in $pdo
 
 try {
-    // Verify old password
-    $stmt = $conn->prepare("SELECT password FROM users WHERE id = ?");
-    $stmt->bind_param("i", $_SESSION['user_id']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
+    // Verify the old password
+    $stmt = $pdo->prepare("SELECT password FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
     
     if (!$user || !password_verify($old_password, $user['password'])) {
         echo json_encode([
             'success' => false,
-            'error' => 'Current password is incorrect'
+            'error'   => 'Current password is incorrect'
         ]);
         exit;
     }
     
-    // Update password
+    // Update the password
     $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
-    $stmt = $conn->prepare("UPDATE users SET password = ? WHERE id = ?");
-    $stmt->bind_param("si", $hashed_password, $_SESSION['user_id']);
+    $stmt = $pdo->prepare("UPDATE users SET password = ? WHERE id = ?");
+    $result = $stmt->execute([$hashed_password, $_SESSION['user_id']]);
     
-    if ($stmt->execute()) {
+    if ($result) {
         echo json_encode([
             'success' => true,
             'message' => 'Password updated successfully'
@@ -66,10 +64,6 @@ try {
 } catch (Exception $e) {
     echo json_encode([
         'success' => false,
-        'error' => 'Database error: ' . $e->getMessage()
+        'error'   => 'Database error: ' . $e->getMessage()
     ]);
 }
-
-$stmt->close();
-$conn->close();
-?> 

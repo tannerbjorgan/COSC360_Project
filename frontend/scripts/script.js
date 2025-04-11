@@ -180,17 +180,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const authButtons = document.querySelectorAll('.auth-buttons a, .auth-link');
     authButtons.forEach(button => {
         button.addEventListener('click', function(e) {
-            
-            if (this.href.includes('login.html') || this.href.includes('signup.html')) {
-                e.preventDefault();
-                
-                
-                if (this.textContent.includes('Log In')) {
-                    window.location.href = 'login.html';
-                } else if (this.textContent.includes('Get Started')) {
-                    window.location.href = 'signup.html';
-                }
+            // Only intercept clicks for "Log In" button
+            if (this.textContent.includes('Log In')) {
+                e.preventDefault(); // Prevent default navigation
+                window.location.href = '../Backend/login.php'; // Redirect to login
             }
+            // Allow "Get Started" button to use its default href
         });
     });
     
@@ -284,7 +279,7 @@ if (loginForm) {
     // Test login- with remove after backend implementation 
     if (username === 'testuser' && password === 'password') {
         alert('Login Successful!');
-        window.location.href = 'user-dashboard.html';
+        window.location.href = '../Backend/user-dashboard.php';
     } else {
         displayError('passwordError', 'Invalid username or password.');
     }
@@ -337,7 +332,7 @@ if (loginForm) {
         // Simulate signup (will change later)
         alert('Signup Successful!\n\nName: ' + name + '\nEmail: ' + email + '\nUsername: ' + username + '\nPassword: ' + password);
 
-        window.location.href = 'login.html';
+        window.location.href = '../Backend/login.php';
     });
 }            
 });
