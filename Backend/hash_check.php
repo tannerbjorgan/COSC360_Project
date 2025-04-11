@@ -1,7 +1,7 @@
 <?php
 $input = 'lugiaPokemon2015';
 
-$storedHash = '$2y$10$4ib5U5764wXAW2JW8tLSW.5yIX3NSDjtcK8UeWQl7QWa16c062GxS';
+$storedHash = '$2y$10$N3s0ECPykav2kgOqFMm/ReK6.7ix4WvEwgafM2I3aWWt3CMcejWAO';
 
 echo "Checking password: '" . htmlspecialchars($input) . "'<br>";
 echo "Against stored hash: '" . htmlspecialchars($storedHash) . "'<br><br>";

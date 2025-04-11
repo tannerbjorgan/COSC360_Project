@@ -1,8 +1,8 @@
 <?php
 $host   = 'localhost';
 $dbName = 'dfeng06'; 
-$dbUser = 'dfeng06';    
-$dbPass = 'dfeng06';        
+$dbUser = 'root';    // Changed to default XAMPP username
+$dbPass = '';        // Changed to default XAMPP password (empty)
 
 try {
     $pdo = new PDO("mysql:host=$host;dbname=$dbName;charset=utf8mb4", $dbUser, $dbPass);

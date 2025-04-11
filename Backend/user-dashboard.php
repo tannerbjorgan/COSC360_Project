@@ -60,7 +60,7 @@ try {
         <div class="sidebar">
             <div class="sidebar-header">
 
-                <a href="../frontend/index.html" class="logo">
+                <a href="../frontend/index.php" class="logo">
 
                     <i class="fas fa-pen-fancy"></i>
                     <span>Blogging</span>
@@ -89,22 +89,7 @@ try {
                                 <span>My Posts</span>
                             </a>
                         </li>
-                        <li>
-
-
-                            <a href="#" data-content="drafts">
-                                <i class="fas fa-edit"></i>
-                                <span>Drafts</span>
-                                <span class="badge">3</span>
-                            </a>
-                        </li>
-                        <li>
-
-                            <a href="#" data-content="analytics">
-                                <i class="fas fa-chart-line"></i>
-                                <span>Analytics</span>
-                            </a>
-                        </li>
+                       
                     </ul>
                 </div>
 
