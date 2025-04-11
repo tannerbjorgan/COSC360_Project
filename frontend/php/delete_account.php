@@ -5,56 +5,50 @@ session_start();
 if (!isset($_SESSION['user_id'])) {
     echo json_encode([
         'success' => false,
-        'error' => 'User not authenticated'
+        'error'   => 'User not authenticated'
     ]);
     exit;
 }
 
-require_once('../../Backend/db_connection.php');
+require_once('../../Backend/config.php');  // This file should create a PDO connection in $pdo
 
 try {
-    $conn->begin_transaction();
-    
+    // Begin a transaction
+    $pdo->beginTransaction();
+
     // Delete user's profile image if it exists
-    $stmt = $conn->prepare("SELECT profile_image FROM users WHERE id = ?");
-    $stmt->bind_param("i", $_SESSION['user_id']);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $user = $result->fetch_assoc();
-    
+    $stmt = $pdo->prepare("SELECT profile_image FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
     if ($user && $user['profile_image']) {
         $image_path = '../uploads/' . $user['profile_image'];
         if (file_exists($image_path)) {
             unlink($image_path);
         }
     }
-    
+
     // Delete user's comments
-    $stmt = $conn->prepare("DELETE FROM comments WHERE user_id = ?");
-    $stmt->bind_param("i", $_SESSION['user_id']);
-    $stmt->execute();
-    
+    $stmt = $pdo->prepare("DELETE FROM comments WHERE user_id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+
     // Delete user's likes
-    $stmt = $conn->prepare("DELETE FROM likes WHERE user_id = ?");
-    $stmt->bind_param("i", $_SESSION['user_id']);
-    $stmt->execute();
-    
+    $stmt = $pdo->prepare("DELETE FROM likes WHERE user_id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+
     // Delete user's followers/following relationships
-    $stmt = $conn->prepare("DELETE FROM followers WHERE follower_id = ? OR followed_id = ?");
-    $stmt->bind_param("ii", $_SESSION['user_id'], $_SESSION['user_id']);
-    $stmt->execute();
-    
+    // Note: Adjust the column names as per your schema.
+    $stmt = $pdo->prepare("DELETE FROM followers WHERE follower_id = ? OR following_id = ?");
+    $stmt->execute([$_SESSION['user_id'], $_SESSION['user_id']]);
+
     // Delete user's posts
-    $stmt = $conn->prepare("DELETE FROM posts WHERE user_id = ?");
-    $stmt->bind_param("i", $_SESSION['user_id']);
-    $stmt->execute();
-    
-    // Finally, delete the user
-    $stmt = $conn->prepare("DELETE FROM users WHERE id = ?");
-    $stmt->bind_param("i", $_SESSION['user_id']);
-    
-    if ($stmt->execute()) {
-        $conn->commit();
+    $stmt = $pdo->prepare("DELETE FROM posts WHERE user_id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+
+    // Finally, delete the user record
+    $stmt = $pdo->prepare("DELETE FROM users WHERE id = ?");
+    if ($stmt->execute([$_SESSION['user_id']])) {
+        $pdo->commit();
         session_destroy();
         echo json_encode([
             'success' => true,
@@ -65,13 +59,10 @@ try {
     }
     
 } catch (Exception $e) {
-    $conn->rollback();
+    // Roll back the transaction on error
+    $pdo->rollBack();
     echo json_encode([
         'success' => false,
-        'error' => 'Database error: ' . $e->getMessage()
+        'error'   => 'Database error: ' . $e->getMessage()
     ]);
 }
-
-$stmt->close();
-$conn->close();
-?> 

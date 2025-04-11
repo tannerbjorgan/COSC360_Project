@@ -60,7 +60,7 @@ try {
         <div class="sidebar">
             <div class="sidebar-header">
 
-                <a href="../frontend/index.html" class="logo">
+                <a href="../frontend/index.php" class="logo">
 
                     <i class="fas fa-pen-fancy"></i>
                     <span>Blogging</span>

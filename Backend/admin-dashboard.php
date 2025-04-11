@@ -1,16 +1,45 @@
 <?php
 session_start();
 
-// Ensure user is logged in
+// Check if the user is logged in and is an admin.
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.html");
+    header("Location: login.php");
+    exit;
+}
+if (!isset($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
+    header("Location: ../frontend/index.php");
     exit;
 }
 
-// Ensure user is admin
-if ($_SESSION['is_admin'] != 1) {
-    header("Location: user-dashboard.php");
-    exit;
+require_once('config.php'); // Sets up $pdo as a PDO connection
+
+try {
+    // Query total number of users.
+    $stmt = $pdo->query("SELECT COUNT(*) AS total_users FROM users");
+    $totalUsersData = $stmt->fetch(PDO::FETCH_ASSOC);
+    $totalUsers = $totalUsersData ? $totalUsersData['total_users'] : 0;
+
+    // Query total number of posts.
+    $stmt = $pdo->query("SELECT COUNT(*) AS total_posts FROM posts");
+    $totalPostsData = $stmt->fetch(PDO::FETCH_ASSOC);
+    $totalPosts = $totalPostsData ? $totalPostsData['total_posts'] : 0;
+
+    // Query current admin details.
+    $stmt = $pdo->prepare("SELECT name, username, profile_image FROM users WHERE id = ?");
+    $stmt->execute([$_SESSION['user_id']]);
+    $adminData = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    // Query user management list (all users)
+    $stmt = $pdo->query("SELECT id, username, email, created_at, is_admin FROM users ORDER BY created_at DESC");
+    $userList = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+} catch (PDOException $e) {
+    error_log("DB Error in admin dashboard: " . $e->getMessage());
+    // Set defaults on error.
+    $totalUsers = 0;
+    $totalPosts = 0;
+    $adminData = ['name' => 'Admin User', 'username' => 'admin', 'profile_image' => 'images/placeholder-profile.png'];
+    $userList = [];
 }
 ?>
 <!DOCTYPE html>
@@ -19,19 +48,34 @@ if ($_SESSION['is_admin'] != 1) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Blogging Platform</title>
-
+    <!-- Adjust the paths as needed for your project structure -->
     <link rel="stylesheet" href="../frontend/styles/common.css">
-<link rel="stylesheet" href="../frontend/styles/dashboard.css">
-<link rel="stylesheet" href="../frontend/styles/admin.css">
-
+    <link rel="stylesheet" href="../frontend/styles/dashboard.css">
+    <link rel="stylesheet" href="../frontend/styles/admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Basic inline styles in case your external CSS needs quick adjustments */
+        .stat-card p {
+            font-size: 1.5em;
+            margin: 0;
+        }
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .users-table th, .users-table td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
     <div class="dashboard-container">
         <!-- Sidebar -->
         <div class="sidebar">
             <div class="sidebar-header">
-                <a href="index.html" class="logo">
+                <a href="../frontend/index.php" class="logo">
                     <i class="fas fa-pen-fancy"></i>
                     <span>Admin</span>
                 </a>
@@ -39,10 +83,9 @@ if ($_SESSION['is_admin'] != 1) {
 
             <nav class="sidebar-nav">
                 <div class="nav-section">
-                    <h4>MANAGEMENT</h4>
                     <ul>
                         <li class="active">
-                            <a href="#" data-content="accounts">
+                            <a href="#" id="userAccountsTab" data-content="accounts">
                                 <i class="fas fa-users"></i>
                                 <span>User Accounts</span>
                             </a>
@@ -64,48 +107,22 @@ if ($_SESSION['is_admin'] != 1) {
             </nav>
 
             <div class="sidebar-footer">
-                <a href="admin-profile.html" class="profile-section">
+                <a href="../frontend/admin-profile.php" class="profile-section">
                     <div class="profile-image">
-                        <img src="placeholder-profile.png" alt="Admin Profile">
+                        <img src="<?php echo htmlspecialchars(!empty($adminData['profile_image']) ? $adminData['profile_image'] : 'images/placeholder-profile.png'); ?>" alt="Admin Profile">
                     </div>
                     <div class="profile-info">
-                        <span class="username">Admin User</span>
+                        <span class="username"><?php echo htmlspecialchars($adminData['name']); ?></span>
                         <span class="role">Administrator</span>
                     </div>
                 </a>
             </div>
         </div>
-
+        
         <!-- Main Content -->
         <div class="main-content">
-            <!-- Top Bar -->
-            <div class="top-bar">
-                <div class="search-container">
-                    <i class="fas fa-search search-icon"></i>
-                    <input type="text" placeholder="Search users..." class="search-input">
-                </div>
-                <div class="top-bar-actions">
-                    <button class="notification-btn">
-                        <i class="fas fa-bell"></i>
-                        <span class="notification-badge">3</span>
-                    </button>
-
-                    <!-- Logout link -->
-                    <a href="logout.php" class="btn btn-secondary">Logout</a>
-
-                    <div class="user-menu">
-                        <button class="user-menu-btn">
-                            <img src="placeholder-profile.png" alt="Profile">
-                            <a href="admin-profile.html" class="username-link">Admin User</a>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Dashboard Content -->
-            <div class="dashboard-content">
-                <!-- Stats Overview -->
+            <!-- Stats Overview -->
+            <div class="overview-section">
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon">
@@ -113,8 +130,7 @@ if ($_SESSION['is_admin'] != 1) {
                         </div>
                         <div class="stat-info">
                             <h3>Total Users</h3>
-                            <p>1,234</p>
-                            <span class="trend positive">+12% <i class="fas fa-arrow-up"></i></span>
+                            <p id="totalUsers"><?php echo number_format($totalUsers); ?></p>
                         </div>
                     </div>
                     <div class="stat-card">
@@ -123,52 +139,84 @@ if ($_SESSION['is_admin'] != 1) {
                         </div>
                         <div class="stat-info">
                             <h3>Total Posts</h3>
-                            <p>5,678</p>
-                            <span class="trend positive">+8% <i class="fas fa-arrow-up"></i></span>
-                        </div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">
-                            <i class="fas fa-user-plus"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>New Users</h3>
-                            <p>145</p>
-                            <span class="trend positive">+23% <i class="fas fa-arrow-up"></i></span>
+                            <p id="totalPosts"><?php echo number_format($totalPosts); ?></p>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <!-- Users Table -->
-                <div class="content-section">
-                    <div class="section-header">
-                        <h2>User Management</h2>
-                        <button class="btn btn-outline">
-                            <i class="fas fa-download"></i>
-                            Export Data
-                        </button>
-                    </div>
-                    <div class="table-container">
-                        <table class="users-table">
-                            <thead>
+            <!-- Content Section: User Management List -->
+            <div class="content-section" id="accountsSection">
+                <div class="section-header">
+                    <h2>User Management</h2>
+                </div>
+                <div class="table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Join Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (!empty($userList)): ?>
+                                <?php foreach ($userList as $user): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($user['username']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['email']); ?></td>
+                                        <td><?php echo htmlspecialchars($user['created_at']); ?></td>
+                                        <td><?php echo $user['is_admin'] ? 'Admin' : 'User'; ?></td>
+                                        <td>
+                                            <button class="delete-btn" onclick="deleteUser(<?php echo $user['id']; ?>)">Delete</button>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
                                 <tr>
-                                    <th>Username</th>
-                                    <th>Email</th>
-                                    <th>Join Date</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
+                                    <td colspan="5">No user data available.</td>
                                 </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                    </div>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="../frontend/scripts/script.js"></script>
-
+    <script>
+        // Delete user with given userId.
+        async function deleteUser(userId) {
+            if (!confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
+                return;
+            }
+            try {
+                const response = await fetch('../frontend/php/delete_user.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ user_id: userId })
+                });
+                const data = await response.json();
+                if (data.success) {
+                    // Remove the corresponding row from the table.
+                    const row = document.getElementById('userRow-' + userId);
+                    if (row) {
+                        row.remove();
+                    }
+                    alert("User deleted successfully.");
+                } else {
+                    throw new Error(data.error || "Failed to delete user.");
+                }
+            } catch (error) {
+                console.error("Error deleting user:", error);
+                alert(error.message || "Failed to delete user. Please try again.");
+            }
+        }
+        
+    </script>
 </body>
 </html>

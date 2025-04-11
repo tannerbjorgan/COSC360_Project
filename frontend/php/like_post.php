@@ -1,5 +1,6 @@
 <?php
 header('Content-Type: application/json');
+session_start();
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['post_id'])) {
     echo json_encode(['success' => false, 'message' => 'Invalid request.']);
@@ -7,58 +8,59 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || !isset($_POST['post_id'])) {
 }
 
 $post_id = intval($_POST['post_id']);
-$user_id = 1; 
+$user_id = 1; // Replace with a dynamic user ID (for example, from $_SESSION) as needed
 
-$servername = "localhost";
-$username = "dfeng06";
-$password = "dfeng06";
-$dbname = "dfeng06";
+require_once('../../Backend/config.php'); // This file should create a PDO connection in $pdo
 
-$conn = new mysqli($servername, $username, $password, $dbname);
-if ($conn->connect_error) {
-    echo json_encode(['success' => false, 'message' => 'Connection failed: ' . $conn->connect_error]);
-    exit;
+try {
+    // Check if the user already liked the post
+    $checkSQL = "SELECT id FROM likes WHERE post_id = :post_id AND user_id = :user_id";
+    $stmt = $pdo->prepare($checkSQL);
+    $stmt->execute([
+        'post_id' => $post_id,
+        'user_id' => $user_id
+    ]);
+    
+    if ($stmt->rowCount() > 0) {
+        // If already liked, get the current like count from posts
+        $stmt2 = $pdo->prepare("SELECT like_count FROM posts WHERE id = :post_id");
+        $stmt2->execute(['post_id' => $post_id]);
+        $row = $stmt2->fetch(PDO::FETCH_ASSOC);
+        echo json_encode([
+            'success'    => true,
+            'like_count' => $row ? (int)$row['like_count'] : 0,
+            'message'    => 'Already liked'
+        ]);
+        exit;
+    }
+    
+    // Insert a new like record
+    $insertSQL = "INSERT INTO likes (post_id, user_id) VALUES (:post_id, :user_id)";
+    $stmtInsert = $pdo->prepare($insertSQL);
+    $stmtInsert->execute([
+        'post_id' => $post_id,
+        'user_id' => $user_id
+    ]);
+    
+    // Update the like count in posts by incrementing it by 1
+    $updateSQL = "UPDATE posts SET like_count = like_count + 1 WHERE id = :post_id";
+    $stmtUpdate = $pdo->prepare($updateSQL);
+    $stmtUpdate->execute(['post_id' => $post_id]);
+    
+    // Retrieve the new like count
+    $stmt3 = $pdo->prepare("SELECT like_count FROM posts WHERE id = :post_id");
+    $stmt3->execute(['post_id' => $post_id]);
+    $row = $stmt3->fetch(PDO::FETCH_ASSOC);
+    
+    echo json_encode([
+        'success'    => true,
+        'like_count' => $row ? (int)$row['like_count'] : 0
+    ]);
+    
+} catch (Exception $e) {
+    echo json_encode([
+        'success' => false,
+        'message' => 'Error: ' . $e->getMessage()
+    ]);
 }
-
-$checkStmt = $conn->prepare("SELECT id FROM likes WHERE post_id = ? AND user_id = ?");
-$checkStmt->bind_param("ii", $post_id, $user_id);
-$checkStmt->execute();
-$checkStmt->store_result();
-if ($checkStmt->num_rows > 0) {
-    $stmt2 = $conn->prepare("SELECT like_count FROM posts WHERE id = ?");
-    $stmt2->bind_param("i", $post_id);
-    $stmt2->execute();
-    $result = $stmt2->get_result();
-    $row = $result->fetch_assoc();
-    echo json_encode(['success' => true, 'like_count' => $row['like_count'], 'message' => 'Already liked']);
-    $stmt2->close();
-    $checkStmt->close();
-    $conn->close();
-    exit;
-}
-$checkStmt->close();
-
-$insertStmt = $conn->prepare("INSERT INTO likes (post_id, user_id) VALUES (?, ?)");
-$insertStmt->bind_param("ii", $post_id, $user_id);
-if (!$insertStmt->execute()) {
-    echo json_encode(['success' => false, 'message' => 'Error: ' . $insertStmt->error]);
-    exit;
-}
-$insertStmt->close();
-
-$updateStmt = $conn->prepare("UPDATE posts SET like_count = like_count + 1 WHERE id = ?");
-$updateStmt->bind_param("i", $post_id);
-if ($updateStmt->execute()) {
-    $stmt3 = $conn->prepare("SELECT like_count FROM posts WHERE id = ?");
-    $stmt3->bind_param("i", $post_id);
-    $stmt3->execute();
-    $result = $stmt3->get_result();
-    $row = $result->fetch_assoc();
-    echo json_encode(['success' => true, 'like_count' => $row['like_count']]);
-    $stmt3->close();
-} else {
-    echo json_encode(['success' => false, 'message' => 'Update failed: ' . $updateStmt->error]);
-}
-$updateStmt->close();
-$conn->close();
 ?>

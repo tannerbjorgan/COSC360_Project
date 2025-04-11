@@ -60,7 +60,7 @@ if (!isset($_GET['id'])) {
     const postId = <?php echo (int)$_GET['id']; ?>;
     const isLoggedIn = <?php echo $isLoggedIn ? 'true' : 'false'; ?>;
 
-    // Format date helper function
+    // Helper function to format date strings.
     function formatDate(dateString) {
         const date = new Date(dateString);
         return date.toLocaleDateString('en-US', { 
@@ -72,7 +72,7 @@ if (!isset($_GET['id'])) {
         });
     }
 
-    // Load post data
+    // Load post data from the backend.
     async function loadPost() {
         try {
             const response = await fetch(`php/get_post.php?id=${postId}`);
@@ -87,7 +87,7 @@ if (!isset($_GET['id'])) {
                     
                     <div class="meta-row">
                         <div class="user-info">
-                            <img src="images/placeholder-profile.png" alt="${post.author.name}" class="author-avatar">
+                            <img src="${post.author.profile_image ? post.author.profile_image : 'images/placeholder-profile.png'}" alt="${post.author.name}" class="author-avatar"style="width:75px; height:75px; object-fit:cover;">
                             <div class="author-details">
                                 <span class="author-name">${post.author.name}</span>
                                 <span class="post-date">${formatDate(post.created_at)}</span>
@@ -113,11 +113,10 @@ if (!isset($_GET['id'])) {
                 
                 document.getElementById('postContent').innerHTML = postHtml;
                 
-                // Load comments
                 const commentsHtml = post.comments.map(comment => `
                     <div class="comment">
                         <div class="comment-header">
-                            <img src="images/placeholder-profile.png" alt="${comment.author.name}" class="comment-avatar">
+                            <img src="${comment.author.profile_image ? comment.author.profile_image : 'images/placeholder-profile.png'}" alt="${comment.author.name}" class="comment-avatar"style="width:30px; height:30px; object-fit:cover;">
                             <div class="comment-meta">
                                 <span class="comment-author">${comment.author.name}</span>
                                 <span class="comment-time">${formatDate(comment.created_at)}</span>
@@ -142,7 +141,7 @@ if (!isset($_GET['id'])) {
         }
     }
 
-    // Toggle like
+    // Toggle like functionality.
     async function toggleLike() {
         if (!isLoggedIn) {
             window.location.href = '../Backend/login.html';
@@ -162,7 +161,6 @@ if (!isset($_GET['id'])) {
             if (data.success) {
                 const likeBtn = document.querySelector('.like-btn');
                 const likeCount = document.getElementById('likeCount');
-                
                 likeBtn.classList.toggle('liked');
                 likeCount.textContent = data.likes_count;
             }
@@ -171,7 +169,7 @@ if (!isset($_GET['id'])) {
         }
     }
 
-    // Submit comment
+    // Submit new comment functionality.
     document.getElementById('submitComment')?.addEventListener('click', async () => {
         const commentText = document.getElementById('commentText').value.trim();
         const submitButton = document.getElementById('submitComment');
@@ -200,13 +198,13 @@ if (!isset($_GET['id'])) {
             
             if (data.success) {
                 commentTextarea.value = '';
-                await loadPost(); // Reload the post to show the new comment
+                await loadPost();  // Reload the post and comments.
                 
-                // Update comment count
+                // Optionally update comment count.
                 const commentCount = document.getElementById('commentCount');
                 commentCount.textContent = parseInt(commentCount.textContent) + 1;
                 
-                // Scroll to the new comment
+                // Scroll to the new comment.
                 const commentsList = document.getElementById('commentsList');
                 commentsList.lastElementChild?.scrollIntoView({ behavior: 'smooth' });
             } else {
@@ -221,15 +219,15 @@ if (!isset($_GET['id'])) {
         }
     });
 
-    // Back button handler
+    // Back button handler.
     document.getElementById('backBtn').addEventListener('click', () => {
         window.history.back();
     });
 
-    // Load the post when the page loads
+    // Load the post when the page loads.
     loadPost();
 
-    // Add this helper function at the end of your JavaScript code
+    // Helper function to escape HTML.
     function escapeHtml(unsafe) {
         return unsafe
             .replace(/&/g, "&amp;")
@@ -240,4 +238,4 @@ if (!isset($_GET['id'])) {
     }
     </script>
 </body>
-</html> 
+</html>

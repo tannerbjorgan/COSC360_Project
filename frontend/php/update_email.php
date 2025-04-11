@@ -5,45 +5,45 @@ session_start();
 if (!isset($_SESSION['user_id'])) {
     echo json_encode([
         'success' => false,
-        'error' => 'User not authenticated'
+        'error'   => 'User not authenticated'
     ]);
     exit;
 }
 
-// Get JSON data
+// Get JSON data from the request body.
 $data = json_decode(file_get_contents('php://input'), true);
 $email = isset($data['email']) ? trim($data['email']) : '';
 
 if (!$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     echo json_encode([
         'success' => false,
-        'error' => 'Invalid email address'
+        'error'   => 'Invalid email address'
     ]);
     exit;
 }
 
-require_once('../../Backend/db_connection.php');
+require_once('../../Backend/config.php'); // This should create a PDO connection in $pdo
 
 try {
-    // Check if email is already in use by another user
-    $stmt = $conn->prepare("SELECT id FROM users WHERE email = ? AND id != ?");
-    $stmt->bind_param("si", $email, $_SESSION['user_id']);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    // Check if the email is already in use by another user.
+    $sql = "SELECT id FROM users WHERE email = ? AND id != ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$email, $_SESSION['user_id']]);
     
-    if ($result->num_rows > 0) {
+    if ($stmt->rowCount() > 0) {
         echo json_encode([
             'success' => false,
-            'error' => 'Email address is already in use'
+            'error'   => 'Email address is already in use'
         ]);
         exit;
     }
     
-    // Update email
-    $stmt = $conn->prepare("UPDATE users SET email = ? WHERE id = ?");
-    $stmt->bind_param("si", $email, $_SESSION['user_id']);
+    // Update the user's email.
+    $sql = "UPDATE users SET email = ? WHERE id = ?";
+    $stmt = $pdo->prepare($sql);
+    $result = $stmt->execute([$email, $_SESSION['user_id']]);
     
-    if ($stmt->execute()) {
+    if ($result) {
         echo json_encode([
             'success' => true,
             'message' => 'Email updated successfully'
@@ -55,10 +55,6 @@ try {
 } catch (Exception $e) {
     echo json_encode([
         'success' => false,
-        'error' => 'Database error: ' . $e->getMessage()
+        'error'   => 'Database error: ' . $e->getMessage()
     ]);
 }
-
-$stmt->close();
-$conn->close();
-?> 
